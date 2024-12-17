@@ -4,7 +4,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import instanceClient from "@/configs/client";
 import { Slider } from "antd";
 import ProductsList from "./ProductsList";
-import Banner from "../../vourcher/_component/banner";
+import Banner from "./banner";
 
 const ProductCategories = ({ handleWishlist, isPending }: any) => {
   const [showcate, setShowcate] = useState(true);
@@ -21,7 +21,7 @@ const ProductCategories = ({ handleWishlist, isPending }: any) => {
   const queryClient = useQueryClient();
 
   const { data } = useQuery({
-    queryKey: ["PRODUCTSLOC", slug],
+    queryKey: ["PRODUCTS_KEY", slug],
     queryFn: async () => {
       const response = await instanceClient.post(
         `chuong-trinh-uu-dai/${slug}`,
@@ -37,7 +37,7 @@ const ProductCategories = ({ handleWishlist, isPending }: any) => {
       return response.data;
     },
   });
-
+console.log(data)
   const { mutate } = useMutation({
     mutationFn: async () => {
       const response = await instanceClient.post(
@@ -53,7 +53,7 @@ const ProductCategories = ({ handleWishlist, isPending }: any) => {
       return response.data;
     },
     onSuccess: (data) => {
-      queryClient.setQueryData(["PRODUCTSLOC"], data);
+      queryClient.setQueryData(["PRODUCTS_KEY"], data);
     },
   });
 

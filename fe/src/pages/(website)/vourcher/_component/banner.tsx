@@ -21,7 +21,7 @@ interface Promotion {
 
 const Banner = () => {
   const [countdowns, setCountdowns] = useState<{ [key: number]: any }>({});
-  
+
   const { data: promotions = [] } = useQuery<Promotion[]>({
     queryKey: ["promotions"],
     queryFn: async () => {
@@ -89,67 +89,131 @@ const Banner = () => {
 
               return (
                 <div key={promotion.id} className="relative">
-                  <Link to={`/shopp/${promotion.duong_dan}`}>
-                    <img
-                      src={promotion.duong_dan_anh}
-                      alt={promotion.ten_uu_dai}
-                      className="w-full md:bg-center bg-top bg-cover md:h-[550px] h-[250px] rounded cursor-pointer"
-                    />
-                    <motion.div
-                      initial={{ x: -100, opacity: 0 }}
-                      animate={{ x: 0, opacity: 1 }}
-                      className="absolute top-6 left-6 bg-gradient-to-r from-red-500 to-pink-500 text-white text-lg px-6 py-2 rounded-full shadow-lg font-semibold"
-                    >
-                      {countdown.label}
-                    </motion.div>
-                    {countdown.label !== "Đã Kết Thúc" && (
+                  {countdown.label === "Đang Diễn Ra" ? (
+                    <Link to={`/shopp/${promotion.duong_dan}`}>
+                      <img
+                        src={promotion.duong_dan_anh}
+                        alt={promotion.ten_uu_dai}
+                        className="w-full md:bg-center bg-top bg-cover md:h-[550px] h-[250px] rounded cursor-pointer"
+                      />
                       <motion.div
-                        initial={{ y: 50, opacity: 0 }}
-                        animate={{ y: 0, opacity: 1 }}
-                        className="absolute bottom-8 right-8 bg-white/90 backdrop-blur-sm p-6 rounded-xl shadow-xl flex items-center gap-6"
+                        initial={{ x: -100, opacity: 0 }}
+                        animate={{ x: 0, opacity: 1 }}
+                        className="absolute top-6 left-6 bg-gradient-to-r from-red-500 to-pink-500 text-white text-lg px-6 py-2 rounded-full shadow-lg font-semibold"
                       >
-                        {Object.entries(timeLeft).map(([unit, value]) => (
-                          <motion.div
-                            key={unit}
-                            className="text-center min-w-[80px] relative"
-                            whileHover={{ scale: 1.1 }}
-                            transition={{ type: "spring", stiffness: 300 }}
-                          >
-                            <AnimatePresence mode="wait">
-                              <motion.div
-                                key={value}
-                                initial={{ y: 20, opacity: 0 }}
-                                animate={{ y: 0, opacity: 1 }}
-                                exit={{ y: -20, opacity: 0 }}
-                                className="text-4xl font-bold text-gray-800 mb-1"
-                              >
-                                {String(value).padStart(2, '0')}
-                              </motion.div>
-                            </AnimatePresence>
-                            <div className="text-sm font-medium text-gray-600 uppercase tracking-wider">
-                              {unit === "days" ? "Ngày"
-                                : unit === "hours" ? "Giờ"
-                                : unit === "minutes" ? "Phút"
-                                : unit === "seconds" ? "Giây"
-                                : unit}
-                            </div>
-                            <motion.div
-                              className="absolute inset-0 border-2 border-pink-500 rounded-lg"
-                              animate={{
-                                scale: [1, 1.1, 1],
-                                opacity: [1, 0.5, 1]
-                              }}
-                              transition={{
-                                duration: 1,
-                                repeat: Infinity,
-                                ease: "easeInOut"
-                              }}
-                            />
-                          </motion.div>
-                        ))}
+                        {countdown.label}
                       </motion.div>
-                    )}
-                  </Link>
+                      {countdown.label !== "Đã Kết Thúc" && (
+                        <motion.div
+                          initial={{ y: 50, opacity: 0 }}
+                          animate={{ y: 0, opacity: 1 }}
+                          className="absolute bottom-8 right-8 bg-white/90 backdrop-blur-sm p-6 rounded-xl shadow-xl flex items-center gap-6"
+                        >
+                          {Object.entries(timeLeft).map(([unit, value]) => (
+                            <motion.div
+                              key={unit}
+                              className="text-center min-w-[80px] relative"
+                              whileHover={{ scale: 1.1 }}
+                              transition={{ type: "spring", stiffness: 300 }}
+                            >
+                              <AnimatePresence mode="wait">
+                                <motion.div
+                                  key={value}
+                                  initial={{ y: 20, opacity: 0 }}
+                                  animate={{ y: 0, opacity: 1 }}
+                                  exit={{ y: -20, opacity: 0 }}
+                                  className="text-4xl font-bold text-gray-800 mb-1"
+                                >
+                                  {String(value).padStart(2, '0')}
+                                </motion.div>
+                              </AnimatePresence>
+                              <div className="text-sm font-medium text-gray-600 uppercase tracking-wider">
+                                {unit === "days" ? "Ngày"
+                                  : unit === "hours" ? "Giờ"
+                                  : unit === "minutes" ? "Phút"
+                                  : unit === "seconds" ? "Giây"
+                                  : unit}
+                              </div>
+                              <motion.div
+                                className="absolute inset-0 border-2 border-pink-500 rounded-lg"
+                                animate={{
+                                  scale: [1, 1.1, 1],
+                                  opacity: [1, 0.5, 1]
+                                }}
+                                transition={{
+                                  duration: 1,
+                                  repeat: Infinity,
+                                  ease: "easeInOut"
+                                }}
+                              />
+                            </motion.div>
+                          ))}
+                        </motion.div>
+                      )}
+                    </Link>
+                  ) : (
+                    <div>
+                      <img
+                        src={promotion.duong_dan_anh}
+                        alt={promotion.ten_uu_dai}
+                        className="w-full md:bg-center bg-top bg-cover md:h-[550px] h-[250px] rounded cursor-not-allowed opacity-70"
+                      />
+                      <motion.div
+                        initial={{ x: -100, opacity: 0 }}
+                        animate={{ x: 0, opacity: 1 }}
+                        className="absolute top-6 left-6 bg-gray-500 text-white text-lg px-6 py-2 rounded-full shadow-lg font-semibold"
+                      >
+                        {countdown.label}
+                      </motion.div>
+                      {countdown.label !== "Đã Kết Thúc" && (
+                        <motion.div
+                          initial={{ y: 50, opacity: 0 }}
+                          animate={{ y: 0, opacity: 1 }}
+                          className="absolute bottom-8 right-8 bg-white/90 backdrop-blur-sm p-6 rounded-xl shadow-xl flex items-center gap-6"
+                        >
+                          {Object.entries(timeLeft).map(([unit, value]) => (
+                            <motion.div
+                              key={unit}
+                              className="text-center min-w-[80px] relative"
+                              whileHover={{ scale: 1.1 }}
+                              transition={{ type: "spring", stiffness: 300 }}
+                            >
+                              <AnimatePresence mode="wait">
+                                <motion.div
+                                  key={value}
+                                  initial={{ y: 20, opacity: 0 }}
+                                  animate={{ y: 0, opacity: 1 }}
+                                  exit={{ y: -20, opacity: 0 }}
+                                  className="text-4xl font-bold text-gray-800 mb-1"
+                                >
+                                  {String(value).padStart(2, '0')}
+                                </motion.div>
+                              </AnimatePresence>
+                              <div className="text-sm font-medium text-gray-600 uppercase tracking-wider">
+                                {unit === "days" ? "Ngày"
+                                  : unit === "hours" ? "Giờ"
+                                  : unit === "minutes" ? "Phút"
+                                  : unit === "seconds" ? "Giây"
+                                  : unit}
+                              </div>
+                              <motion.div
+                                className="absolute inset-0 border-2 border-gray-500 rounded-lg"
+                                animate={{
+                                  scale: [1, 1.1, 1],
+                                  opacity: [1, 0.5, 1]
+                                }}
+                                transition={{
+                                  duration: 1,
+                                  repeat: Infinity,
+                                  ease: "easeInOut"
+                                }}
+                              />
+                            </motion.div>
+                          ))}
+                        </motion.div>
+                      )}
+                    </div>
+                  )}
                 </div>
               );
             })}

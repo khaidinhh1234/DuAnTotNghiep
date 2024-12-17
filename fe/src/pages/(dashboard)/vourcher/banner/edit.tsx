@@ -190,24 +190,12 @@ const ChuongTrinhUuDaiEdit: React.FC = () => {
     return childCategories;
   };
 
-  const handleCategoryChange = (selectedCategories: string[]) => {
-    if (selectedCategories.length === 0) {
-      setFilteredProducts(availableProducts);
-    } else {
-      const allSelectedCategories = selectedCategories.flatMap((catId) => {
-        const category = categories.find((cat) => cat.id.toString() === catId);
-        return category ? getAllChildCategories(category) : [catId];
-      });
-
-      const filtered = availableProducts.filter((product) =>
-        allSelectedCategories.includes(product.danh_muc_id.toString())
-      );
-      setFilteredProducts(filtered);
+  useEffect(() => {
+    if (availableProductsData) {
+      setAvailableProducts(availableProductsData.data);
+      setFilteredProducts(availableProductsData.data);
     }
-    setSelectedProducts([]);
-    setIsAllSelected(false);
-    form.setFieldsValue({ san_pham: [] });
-  };
+  }, [availableProductsData]);
 
   const renderTreeNodes = (
     data: IDanhMuc[]
@@ -231,7 +219,7 @@ const ChuongTrinhUuDaiEdit: React.FC = () => {
       nav("/admin/chuongtrinhuudai");
     },
     onError: (error: any) => {
-      console.error("Mutation error:", error);
+      console.error("Cập nhập:", error);
       message.error(error.message);
     },
   });
@@ -263,7 +251,7 @@ const ChuongTrinhUuDaiEdit: React.FC = () => {
 
       mutate(chuongTrinhUuDai);
     } catch (error) {
-      console.error("Error in onFinish:", error);
+      console.error("lỗilỗi", error);
       message.error("Lỗi khi cập nhật chương trình ưu đãi");
     }
   };
@@ -380,7 +368,7 @@ const ChuongTrinhUuDaiEdit: React.FC = () => {
                       style={{ width: 610 }}
                     >
                       <Select.Option value="phan_tram">Phần trăm</Select.Option>
-                      <Select.Option value="tien">Tiền</Select.Option>
+                      {/* <Select.Option value="tien">Tiền</Select.Option> */}
                     </Select>
                   </Form.Item>
                   <Form.Item

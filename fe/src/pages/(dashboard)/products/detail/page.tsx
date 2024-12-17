@@ -1,63 +1,4 @@
-// const allImages = [product.anh_san_pham, ...variantImages].filter(Boolean);
-{
-  /* <div className="lg:col-span-6 col-span-12 mb-6">
-<div className="bg-[#FAFAFB] w-full h-[400px] inline-flex justify-center items-center mb-4 rounded-2xl shadow shadow-zinc-300/60">
-  <Swiper
-    style={{
-      "--swiper-navigation-color": "#000000",
-      "--swiper-pagination-color": "#000000",
-    } as React.CSSProperties}
-    centeredSlides={true}
-    autoplay={{
-      delay: 2500,
-      disableOnInteraction: false,
-    }}
-    pagination={{
-      clickable: true,
-    }}
-    navigation={true}
-    thumbs={thumbsSwiper ? { swiper: thumbsSwiper } : undefined}
-    modules={[Autoplay, Pagination, Navigation, Thumbs, FreeMode]}
-    className="mySwiper2 w-full swiper-with-hover"
-    loop={true}
-    spaceBetween={10}
-  >
-    {allImages.map((image, index) => (
-      <SwiperSlide key={index}>
-        <img
-          src={image}
-          alt=""
-          onClick={() => handlePreview(image)}
-          style={{ cursor: "pointer", maxHeight: "100%", width: "auto" }}
-        />
-      </SwiperSlide>
-    ))}
-  </Swiper>
-</div>
-<div className="w-full mx-auto">
-  <Swiper
-    onSwiper={(swiperInstance) =>
-      setThumbsSwiper(swiperInstance as any)
-    }
-    loop={true}
-    spaceBetween={16}
-    slidesPerView={4}
-    freeMode={true}
-    watchSlidesProgress={true}
-    modules={[FreeMode, Navigation, Thumbs]}
-    className="mySwiper1"
-  >
-    {allImages.map((image, index) => (
-      <SwiperSlide key={index}>
-        <div className="w-[60px] h-[60px] bg-[#F4F4F4] rounded-lg border border-[#F4F4F4] flex justify-center items-center">
-          <img src={image} alt="" style={{ cursor: "pointer", maxWidth: "100%", maxHeight: "100%", objectFit: "contain" }} />
-        </div>
-      </SwiperSlide>
-    ))}
-  </Swiper>
-</div>
-</div> */
-}
+
 
 import React, { useState, useEffect, useMemo } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
@@ -607,17 +548,27 @@ const Detail: React.FC<ProductDetailProps> = ({ item }: any) => {
             <h1 className="text-2xl font-semibold mb-4">Chi tiết sản phẩm</h1>
             <div className="mb-8 flex justify-center"></div>
 
-            <div
-              className={`description mb-4 text-sm px-5 whitespace-pre-wrap ${
-                isDescriptionExpanded ? "" : "line-clamp-3"
-              }`}
-              dangerouslySetInnerHTML={{ __html: product.noi_dung }}
-            />
-            <div className="flex justify-center">
-              <Button onClick={toggleDescription} className="mb-4">
-                {isDescriptionExpanded ? "Thu gọn" : "Xem thêm"}
-              </Button>
-            </div>
+                   <div className="mb-4">
+                     <div
+                       className={`description mb-4 text-sm px-5 whitespace-pre-wrap relative ${
+                         isDescriptionExpanded
+                           ? "h-auto"
+                           : "max-h-[500px] overflow-hidden"
+                       }`}
+                     >
+                       <div
+                         dangerouslySetInnerHTML={{ __html: product?.noi_dung || "" }}
+                       />
+                       {!isDescriptionExpanded && (
+                         <div className="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-white to-transparent" />
+                       )}
+                     </div>
+                     <div className="flex justify-center">
+                       <Button onClick={toggleDescription} className="mb-4">
+                         {isDescriptionExpanded ? "Thu gọn" : "Xem thêm"}
+                       </Button>
+                     </div>
+                   </div>
 
             <div>
               <h2 className="text-2xl font-semibold mb-4">Đánh giá sản phẩm</h2>

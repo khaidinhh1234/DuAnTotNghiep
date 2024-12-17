@@ -40,7 +40,7 @@ const View = ({ id, ID }: { id: string; ID: number }) => {
     user.access_token || localStorage.getItem("access_token");
 
   const { data } = useQuery({
-    queryKey: ["PRODUCT_DETAIL", id],
+    queryKey: ["PRODUCTS_KEY", id],
     queryFn: async () => {
       const response = await instanceClient.get(`chi-tiet-san-pham/${id}`);
       return response.data;
@@ -72,7 +72,7 @@ const View = ({ id, ID }: { id: string; ID: number }) => {
     },
     onSuccess: () => {
       queryclient.invalidateQueries({
-        queryKey: ["PRODUCT_DETAIL", id],
+        queryKey: ["PRODUCTS_KEY"],
       });
     },
   });

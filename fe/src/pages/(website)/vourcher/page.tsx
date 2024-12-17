@@ -46,7 +46,7 @@ const Voucher = () => {
   const [selectedVoucher, setSelectedVoucher] = useState<Voucher | null>(null);
   const queryClient = useQueryClient();
 
-  const { data: vouchersData, isLoading } = useQuery({
+  const { data: vouchersData,  } = useQuery({
     queryKey: ["vouchers"],
     queryFn: async () => {
       const response = await instanceClient.get("/ma-khuyen-mai");
@@ -59,6 +59,7 @@ const Voucher = () => {
       reversedData
         ?.filter((v: Voucher) => v.da_thu_thap === 1)
         ?.map((v: Voucher) => v.ma_code) || []
+
     );
   });
 
