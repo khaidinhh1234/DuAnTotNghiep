@@ -209,7 +209,7 @@ const ChuongTrinhUuDai: React.FC = () => {
     },
     {
       title: "Ảnh",
-      width: "15%",
+      width: "10%",
       key: "duong_dan_anh",
       dataIndex: "duong_dan_anh",
       render: (duong_dan_anh: string) =>
@@ -245,7 +245,7 @@ const ChuongTrinhUuDai: React.FC = () => {
       render: (text) => formatDate(text),
       ...getDateColumnSearchProps("ngay_hien_thi"),
       sorter: (a, b) => new Date(a.ngay_hien_thi).getTime() - new Date(b.ngay_hien_thi).getTime(),
-      width: "15%",
+      width: "10%",
     },
     {
       title: "Thời gian",
@@ -309,7 +309,7 @@ const ChuongTrinhUuDai: React.FC = () => {
       dataIndex: "gia_tri_uu_dai",
       key: "gia_tri_uu_dai",
       render: (value, record) => `${value}${record.loai === 'phan_tram' ? '%' : ''}`,
-      width: "10%",
+      width: "20%",
     },
     {
       title: "Quản trị",

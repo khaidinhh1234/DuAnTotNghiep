@@ -4,7 +4,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import instanceClient from "@/configs/client";
 import { Slider } from "antd";
 import ProductsList from "./ProductsList";
-import Banner from "../../vourcher/_component/banner";
+import Banner from "./banner";
 
 const ProductCategories = ({ handleWishlist, isPending }: any) => {
   const [showcate, setShowcate] = useState(true);
@@ -37,7 +37,7 @@ const ProductCategories = ({ handleWishlist, isPending }: any) => {
       return response.data;
     },
   });
-
+console.log(data)
   const { mutate } = useMutation({
     mutationFn: async () => {
       const response = await instanceClient.post(
