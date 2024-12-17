@@ -319,7 +319,7 @@ const DetailTransport = ({ record }: any) => {
                         ? "bg-green-500" // Đã giao hàng thành công: màu xanh lá
                         : record.trang_thai_van_chuyen === "Giao hàng thất bại"
                           ? "bg-red-500" // Giao hàng thất bại: màu đ��
-                          : "bg-red-500" 
+                          : "bg-red-500"
                 } text-white px-2 py-1 font-bold rounded-lg`}
               >
                 {record.trang_thai_van_chuyen === "chờ xử lý"

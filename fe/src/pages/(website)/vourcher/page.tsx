@@ -53,11 +53,13 @@ const Voucher = () => {
       return response.data;
     },
   });
-
+  const reversedData = vouchersData?.data?.slice().reverse();
   const [savedVouchers, setSavedVouchers] = useState<string[]>(() => {
     return (
-      vouchersData?.data
+      reversedData
+
         .filter((v: Voucher) => v.da_thu_thap === 1)
+
         .map((v: Voucher) => v.ma_code) || []
     );
   });
@@ -168,10 +170,11 @@ const Voucher = () => {
           <div className="space-y-8 px-4">
             <h2 className="text-3xl font-bold text-black-500">Tất cả ưu đãi</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {vouchersData?.data && vouchersData.data.length > 0 ? (
+              {reversedData && reversedData.length > 0 ? (
                 <>
-                  {vouchersData?.data
+                  {reversedData
                     ?.slice(0, lengthss)
+
                     .map((voucher: Voucher) => (
                       <div
                         key={voucher.id}
@@ -283,7 +286,7 @@ const Voucher = () => {
                 </div>
               )}
             </div>{" "}
-            {lengthss < vouchersData?.data.length && (
+            {lengthss < reversedData.length && (
               <div
                 className="flex justify-center mt-10"
                 onClick={() => setLengthss(lengthss + 6)}

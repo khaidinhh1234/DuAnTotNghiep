@@ -77,7 +77,6 @@ const ShippingAddressPage = () => {
   const queryClient = useQueryClient();
   const { mutate, isPending } = useMutation({
     mutationFn: async (data: any) => {
-      console.log(data);
       try {
         // Bước 1: Tạo đơn hàng
         if (trangthai === "Ví tiền") {
@@ -110,7 +109,7 @@ const ShippingAddressPage = () => {
           }
         } else if (trangthai === "Thanh toán khi nhận hàng") {
           toast.success("Đặt hàng thành công");
-          nav(`/thankyou?orderId=${order.data.data.ma_don_hang}&resultCode=0`); // Chuyển hướng người dùng đến trang cảm ơn
+          nav(`/thankyou?orderId=${order.data.data.ma_don_hang}&resultCode=0`);
         } else {
           nav("/mypro/myorder/");
           message.error("Đặt hàng thất bại");
@@ -126,6 +125,8 @@ const ShippingAddressPage = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["notifications"] });
+      queryClient.invalidateQueries({ queryKey: ["cart"] });
+
       // message.success("Đặt hàng thành công");
     },
   });

@@ -638,7 +638,7 @@ const MyOrderdetail = () => {
               <p className="md:hidden">
                 ₫
                 {chitiet?.tien_ship !== 0
-                  ? (chitiet?.tien_ship ?? "Miễn Phí Ship")
+                  ? (chitiet?.tien_ship?.toLocaleString() ?? "Miễn Phí Ship")
                   : "Miễn Phí Ship"}
               </p>
               <p>Mã khuyến mãi từ GLOW</p>{" "}
@@ -658,7 +658,7 @@ const MyOrderdetail = () => {
               {/* <p>₫{(chitiet?.tiet_kiem ?? 0).toLocaleString("vn-VN")}</p> */}
               <p>
                 {chitiet?.tien_ship !== 0
-                  ? (chitiet?.tien_ship ?? "Miễn Phí Ship")
+                  ? "₫" + chitiet?.tien_ship?.toLocaleString()
                   : "Miễn Phí Ship"}
               </p>
               <p>₫{(chitiet?.so_tien_giam_gia ?? 0).toLocaleString("vn-VN")}</p>
