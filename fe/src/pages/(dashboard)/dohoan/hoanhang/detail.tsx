@@ -122,7 +122,8 @@ const Detail = ({ record }: any) => {
                             <div className="flex gap-4">
                               <img
                                 src={
-                                  item?.bien_the_san_pham?.san_pham
+                                  item?.bien_the_san_pham?.anh_bien_the?.[0]?.duong_dan_anh 
+                                  || item?.bien_the_san_pham?.san_pham
                                     ?.anh_san_pham
                                 }
                                 alt=""
@@ -168,8 +169,11 @@ const Detail = ({ record }: any) => {
                         <td colSpan={4}>Không có sản phẩm</td>
                       </tr>
                     )}
-                    {visibleProducts < products.length && (
-                      <div className="flex  ">
+               
+                    </tbody>
+                  </table>
+                  {visibleProducts < products.length && (
+                      <div className="flex justify-center p-4">
                         <div
                           onClick={handleLoadMore}
                           className="font-bold"
@@ -178,8 +182,6 @@ const Detail = ({ record }: any) => {
                         </div>
                       </div>
                     )}
-                    </tbody>
-                  </table>
                 </div>
               </div>
               <div className="bg-white rounded-lg shadow-sm border mt-6 p-4">

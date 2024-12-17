@@ -41,6 +41,8 @@ interface ProductVariant {
   };
   anh_bien_the: Array<{ duong_dan_anh: string }>;
   ten_san_pham: string;
+  gia_khuyen_mai_tam_thoi:number;
+
 }
 
 interface Review {
@@ -330,45 +332,40 @@ const Detail: React.FC<ProductDetailProps> = ({ item }: any) => {
                   </div>
 
                   {selectedVariant && (
-                    <div className="mb-4 text-lg font-medium">
-                      {selectedVariant.gia_khuyen_mai ? (
-                        <>
-                          <span className="text-red-500 text-2xl">
-                            {selectedVariant.gia_khuyen_mai.toLocaleString(
-                              "vi-VN",
-                              {
-                                style: "currency",
-                                currency: "VND",
-                              }
-                            )}
-                          </span>
-                          <del className="text-[#A4A1AA] ml-2">
-                            {selectedVariant.gia_ban.toLocaleString("vi-VN", {
-                              style: "currency",
-                              currency: "VND",
-                            })}
-                          </del>
-                          <span className="ml-2 text-red-500 bg-red-100 rounded-lg px-2 py-1 text-sm">
-                            -
-                            {Math.round(
-                              ((selectedVariant.gia_ban -
-                                selectedVariant.gia_khuyen_mai) /
-                                selectedVariant.gia_ban) *
-                                100
-                            )}
-                            %
-                          </span>
-                        </>
-                      ) : (
-                        <span>
-                          {selectedVariant.gia_ban.toLocaleString("vi-VN", {
-                            style: "currency",
-                            currency: "VND",
-                          })}
-                        </span>
-                      )}
-                    </div>
-                  )}
+  <div className="mb-4 text-lg font-medium">
+    {(() => {
+      const { gia_ban, gia_khuyen_mai, gia_khuyen_mai_tam_thoi } = selectedVariant;
+      const displayPrice = gia_khuyen_mai_tam_thoi || gia_khuyen_mai || gia_ban;
+      const originalPrice = gia_ban;
+      const discount = gia_khuyen_mai_tam_thoi || gia_khuyen_mai;
+
+      return (
+        <>
+          <span className="text-red-500 text-2xl">
+            {displayPrice.toLocaleString("vi-VN", {
+              style: "currency",
+              currency: "VND",
+            })}
+          </span>
+          
+          {discount && discount < originalPrice && (
+            <>
+              <del className="text-[#A4A1AA] ml-2">
+                {originalPrice.toLocaleString("vi-VN", {
+                  style: "currency",
+                  currency: "VND",
+                })}
+              </del>
+              <span className="ml-2 text-red-500 bg-red-100 rounded-lg px-2 py-1 text-sm">
+                -{Math.round(((originalPrice - displayPrice) / originalPrice) * 100)}%
+              </span>
+            </>
+          )}
+        </>
+      );
+    })()}
+  </div>
+)}
 
                   <div className="mb-4">
                     <h3 className="text-gray-900 mb-2 font-bold text-xl">
@@ -486,7 +483,7 @@ const Detail: React.FC<ProductDetailProps> = ({ item }: any) => {
                       <span className="text-gray-700 font-medium">
                         Miễn phí đổi trả:
                       </span>
-                      <span>Tại 267+ cửa hàng trong 15 ngày</span>
+                      <span> trong vòng 7 ngày</span>
                     </div>
 
                     <div className="flex items-center space-x-2">
