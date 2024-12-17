@@ -472,7 +472,7 @@ class DonHangController extends Controller
                 $thongBaoHoanHang = new ThongBaoTelegramController();
                 $thongBaoHoanHang->thongBaoHoanHang($hoanHang);
                 $donHang->update(['ngay_hoan' => Carbon::now()]);
-
+                $donHang->hoanTien->update(['trang_thai' => 'hoan_thanh_cong']);
                 $mess = 'Xác nhận hoàn hàng thành công.';
             } else if ($validated['trang_thai'] === 'tu_choi') {
                 $hoanTien->update(['trang_thai' => 'tu_choi']);
@@ -482,6 +482,7 @@ class DonHangController extends Controller
                     'trang_thai_don_hang' => DonHang::TTDH_TCHH,
                     'ngay_hoan' => null
                 ]);
+                $donHang->hoanTien->update(['trang_thai' => 'tu_choi']);
                 //Lưu giao dịch
                 DB::table('lich_su_giao_diches')->insert([
                     'vi_tien_id' => $giaoDichVi->viTien->id,
