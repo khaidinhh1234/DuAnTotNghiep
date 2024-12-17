@@ -14,10 +14,13 @@ const Detail = ({ record }: any) => {
     },
     enabled: open,
   });
-
+  const [visibleProducts, setVisibleProducts] = useState(2);
+  const handleLoadMore = () => {
+    setVisibleProducts(products.length);
+  };
   const returnOrderDetail = data?.data?.hoan_hang;
   const orderInfo = returnOrderDetail?.don_hang;
-  const products = orderInfo?.chi_tiets;
+  const products = orderInfo?.chi_tiets || [];
   console.log(returnOrderDetail);
   const formatDate = (dateString: string) => {
     if (!dateString) return "";
@@ -112,7 +115,8 @@ const Detail = ({ record }: any) => {
                       </tr>
                     </thead>
                     <tbody className="divide-y">
-                      {products?.map((item: any, index: number) => (
+                    {products && products.length > 0 ? (
+                      products.slice(0, visibleProducts).map((item: any, index: number) => (
                         <tr key={index} className="hover:bg-gray-50">
                           <td className="p-4">
                             <div className="flex gap-4">
@@ -158,7 +162,22 @@ const Detail = ({ record }: any) => {
                             {item?.thanh_tien?.toLocaleString("vi-VN")}đ
                           </td>
                         </tr>
-                      ))}
+                     ))
+                    ) : (
+                      <tr>
+                        <td colSpan={4}>Không có sản phẩm</td>
+                      </tr>
+                    )}
+                    {visibleProducts < products.length && (
+                      <div className="flex  ">
+                        <div
+                          onClick={handleLoadMore}
+                          className="font-bold"
+                        >
+                           <i className="fa-solid fa-share"></i> Xem thêm ...
+                        </div>
+                      </div>
+                    )}
                     </tbody>
                   </table>
                 </div>
