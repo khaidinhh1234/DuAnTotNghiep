@@ -656,7 +656,7 @@ const ProductDetail: React.FC = () => {
                   <h3 className="font-bold text-2xl">
                     {product?.ten_san_pham}
                   </h3>
-                  {selectedVariant && (
+                  {/* {selectedVariant && (
                     <div className="mt-2">
                       <a
                         className={` text-sm px-2 py-1 rounded-sm ${
@@ -670,7 +670,7 @@ const ProductDetail: React.FC = () => {
                           : "Hết hàng"}
                       </a>
                     </div>
-                  )}
+                  )} */}
                 </div>
                 <div className="flex items-center">
                   <h4 className="mb-3 text-lg font-normal">
