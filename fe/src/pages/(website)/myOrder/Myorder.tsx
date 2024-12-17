@@ -38,10 +38,13 @@ const MyOrder = () => {
       return response.data;
     },
     getNextPageParam: (lastPage) => {
+      if (!lastPage || !lastPage.data || !lastPage.data.pagination)
+        return undefined;
       return lastPage.data.pagination.has_more_pages
         ? lastPage.data.pagination.current_page + 1
         : undefined;
     },
+
     initialPageParam: 1,
   });
   const loadMoreRef = useRef<HTMLDivElement>(null);
@@ -73,7 +76,8 @@ const MyOrder = () => {
   //   data?.pages.map((page) => {
   //     return { ...page, chitiet: page.data };
   //   }) || [];
-  const orders = data?.pages.flatMap((page) => page.data.don_hang) || [];
+  console.log(data);
+  const orders = data?.pages.flatMap((page) => page?.data?.don_hang) || [];
   const tabItems = [
     { label: "Tổng đơn hàng", key: "" },
     { label: "Chờ thanh toán", key: "Chưa thanh toán" },
