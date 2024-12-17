@@ -1,4 +1,3 @@
-
 import { SearchOutlined } from "@ant-design/icons";
 import { useQuery } from "@tanstack/react-query";
 import { Button, DatePicker, Flex, Input, Spin, Table, Tabs } from "antd";
@@ -6,6 +5,7 @@ import type { InputRef, TableColumnsType } from "antd";
 import React, { useEffect, useRef, useState } from "react";
 import instance from "@/configs/admin";
 import Detail from "./detail";
+import OrderDetail from "../../_component/Detaile";
 
 const { RangePicker } = DatePicker;
 

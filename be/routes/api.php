@@ -262,7 +262,7 @@ Route::middleware(['auth.sanctum'])
             ->group(function () {
                 Route::get('donhang', [DonHangController::class, 'index'])->name('donhang.index');
                 Route::get('donhang/{id}', action: [DonHangController::class, 'show'])->name('donhang.show');
-                Route::get('donhang/{ma_don_hang}', [DonHangController::class, 'show'])->name('donhang.show');
+                Route::get('donhangchitiet/{ma_don_hang}', [DonHangController::class, 'showChiTiet'])->withoutMiddleware('auth.checkrole');
                 Route::get('donhang/{id}/bill', [DonHangController::class, 'inHoaDon'])->name('donhang.bill')->withoutMiddleware('auth.checkrole');
                 Route::put('donhang/trang-thai-thanh-toan', [DonHangController::class, 'updatePaymentStatus'])->name('donhang.tttt');
                 Route::put('donhang/trang-thai-don-hang', [DonHangController::class, 'capNhatTrangThaiDonHang'])->name('donhang.ttdh');

@@ -21,6 +21,7 @@ import moment from "moment";
 import instance from "@/configs/admin";
 import { uploadToCloudinary } from "@/configs/cloudinary";
 import { UploadFile } from "antd/lib";
+import dayjs from "dayjs";
 
 interface ISanPham {
   id: number;
@@ -93,8 +94,8 @@ const ChuongTrinhUuDaiEdit: React.FC = () => {
         mo_ta: chuongTrinhUuDaiData.mo_ta,
         ngay_hien_thi: moment(chuongTrinhUuDaiData.ngay_hien_thi),
         date_range: [
-          moment(chuongTrinhUuDaiData.ngay_bat_dau),
-          moment(chuongTrinhUuDaiData.ngay_ket_thuc),
+          dayjs(chuongTrinhUuDaiData.ngay_bat_dau),
+          dayjs(chuongTrinhUuDaiData.ngay_ket_thuc),
         ],
         gia_tri_uu_dai: chuongTrinhUuDaiData.gia_tri_uu_dai,
         loai: chuongTrinhUuDaiData.loai,
