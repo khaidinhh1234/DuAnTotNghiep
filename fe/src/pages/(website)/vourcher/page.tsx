@@ -57,10 +57,9 @@ const Voucher = () => {
   const [savedVouchers, setSavedVouchers] = useState<string[]>(() => {
     return (
       reversedData
-
         ?.filter((v: Voucher) => v.da_thu_thap === 1)
+        ?.map((v: Voucher) => v.ma_code) || []
 
-        .map((v: Voucher) => v.ma_code) || []
     );
   });
 

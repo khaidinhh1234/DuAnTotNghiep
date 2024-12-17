@@ -61,7 +61,7 @@ console.log(data)
     <div>
       <section>
         <div className="container">
-        <Banner />
+          <Banner />
 
           <div className="flex flex-wrap items-start w-full mt-16">
             <button className="lg:hidden w-0.5/4 py-3 px-1 pl-4 mb-4 lg:mb-0">
@@ -69,51 +69,6 @@ console.log(data)
             </button>
 
             <div className="lg:block hidden w-1/5 py-4 mb-4 lg:mb-0 sticky top-20">
-              {/* Categories */}
-              {/* <div className="mb-5">
-                <div
-                  className="flex justify-between items-center cursor-pointer"
-                  onClick={() => setShowcate(!showcate)}
-                >
-                  <h2 className="font-bold mb-2 text-lg">Danh mục sản phẩm</h2>
-                  <button className="mr-3">
-                    <i
-                      className={`fa-solid fa-chevron-${showcate ? "up" : "down"}`}
-                    ></i>
-                  </button>
-                </div>
-
-                {showcate && (
-                  <div className="mt-7">
-                    {data?.data?.chuong_trinh?.danh_sach_loc?.original?.danhMuc?.map(
-                      (category: any, index: number) => (
-                        <div
-                          key={index}
-                          className="flex justify-between items-center my-4"
-                        >
-                          <label className="flex items-center">
-                            <input
-                              type="checkbox"
-                              checked={parentIds.includes(category.id)}
-                              onChange={() => {
-                                setParentIds((prev) =>
-                                  prev.includes(category.id)
-                                    ? prev.filter((id) => id !== category.id)
-                                    : [...prev, category.id]
-                                );
-                                mutate();
-                              }}
-                              className="mr-2"
-                            />
-                            <span>{category.ten_danh_muc}</span>
-                          </label>
-                        </div>
-                      )
-                    )}
-                  </div>
-                )}
-              </div> */}
-
               {/* Price Filter */}
               <div className="mb-5">
                 <div

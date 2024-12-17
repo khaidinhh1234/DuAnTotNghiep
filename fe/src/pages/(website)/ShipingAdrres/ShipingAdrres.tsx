@@ -156,7 +156,7 @@ const ShippingAddressPage = () => {
   };
 
   const handleCode = (data: any) => {
-    setmacode(data ? data : ""); // Cập nhật trạng thái mã khuyến mãi
+    setmacode(data ? data : "");
   };
 
   const { data: checkout } = useQuery({
@@ -172,14 +172,13 @@ const ShippingAddressPage = () => {
     },
   });
   console.log(checkout);
-  const navigate = useNavigate();
   const tong_tien = checkout?.chi_tiet_don_hang;
   const products = checkout?.chi_tiet_don_hang?.san_pham;
-  if (products?.length === 0) {
-    navigate("/gio-hang");
-    toast.error("Sản phẩm của bạn đã hết hàng ");
-    // return null;
-  }
+  // if (products?.length === 0) {
+  //   navigate("/gio-hang");
+  //   toast.error("Sản phẩm của bạn đã hết hàng ");
+  //   // return null;
+  // }
   const handleVerification = async (code: string) => {
     try {
       const orderData = {
