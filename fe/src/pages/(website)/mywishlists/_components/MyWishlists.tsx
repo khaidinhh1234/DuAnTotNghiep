@@ -12,6 +12,7 @@ import Product from "../../_component/Product";
 
 const MyWishlistsPage = ({ yeuthich }: any) => {
   const queryClient = useQueryClient();
+  const [lengths, setLengths] = useState(6);
   const [hoveredProductId, setHoveredProductId] = useState<number | null>(null);
   const [hoveredVariantIndex, setHoveredVariantIndex] = useState<number | null>(
     null
@@ -44,7 +45,7 @@ const MyWishlistsPage = ({ yeuthich }: any) => {
         </h2>
         <div className="grid grid-cols-9 justify-center lg:gap-20 gap-14 px-3">
           {yeuthich && yeuthich.length !== 0 ? (
-            yeuthich?.map((product: any, index: any) => (
+            yeuthich?.slice(0, lengths).map((product: any, index: any) => (
               <div
                 className="xl:col-span-3 lg:col-span-4 col-span-12 md:col-span-6 mb-2 lg:w-[290px] w-[350px] mx-auto lg:mx-0"
                 key={index}
@@ -70,6 +71,16 @@ const MyWishlistsPage = ({ yeuthich }: any) => {
             </>
           )}
         </div>
+        {lengths < yeuthich.length && (
+          <div className="col-span-12 text-center mt-4">
+            <button
+              onClick={() => setLengths(lengths + 3)}
+              className="bg-black text-white px-4 py-2 rounded-md hover:bg-white hover:text-black border border-black"
+            >
+              Xem thêm
+            </button>
+          </div>
+        )}
       </div>
     </>
   );

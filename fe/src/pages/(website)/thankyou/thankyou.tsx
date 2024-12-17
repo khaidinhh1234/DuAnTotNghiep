@@ -104,89 +104,91 @@ const ThankYouPage = () => {
   });
   const products = sanpham?.data;
   return (
-    <div className="container">
-      {/* Header Section */}
-      <header className=" bg-gradient-to-r from-gray-900 via-gray-500 to-gray-900 text-white rounded-lg p-10 text-center mt-12  mx-auto shadow-2xl transform transition-all duration-500 ease-out hover:scale-105">
-        <h2 className="text-3xl font-extrabold flex items-center justify-center mb-6 tracking-wide">
-          {resultCode == 0 ? (
-            <div className="flex items-center justify-center">
-              <span className="flex items-center justify-center w-12 h-12 rounded-full border-4 border-green-400 text-green-400 mr-3">
-                ✔
-              </span>
-              <p className="mt-5">Đặt hàng thành công</p>
-            </div>
-          ) : resultCode === 1006 ? (
-            <div className="flex items-center justify-center">
-              <span className="text-yellow-400 mr-3 animate-bounce">🔔</span>
-              <p className="mt-5">Thanh toán thất bại</p>
-            </div>
-          ) : (
-            <div className="flex items-center justify-center">
-              <span className="text-yellow-400 mr-3 animate-bounce">🔔</span>
-              <p className="mt-5">Đặt hàng thất bại</p>
-            </div>
-          )}
-        </h2>
-        <p className="text-base mb-8 max-w-xl mx-auto leading-relaxed">
-          Cùng GlowClowthingGlowClowthing bảo vệ quyền lợi của bạn - Thường xuyên kiểm tra tin nhắn
-          từ Người bán tại Glow Chat / Chi nhắn & thanh toán khi đơn mua ở trạng
-          thái "Đang giao hàng".
-        </p>
-        <div className="flex justify-center space-x-8">
-          <Link to="/">
-            <button className="bg-white text-gray-900 font-semibold py-3 px-8 rounded-xl shadow-md hover:shadow-lg transition-transform transform hover:-translate-y-1 active:scale-95 duration-300 ease-in-out">
-              Trang chủ
-            </button>
-          </Link>
-          <Link to={`/mypro/myorder/${orderid}`}>
-            <button className="bg-white text-gray-900 font-semibold py-3 px-8 rounded-xl shadow-md hover:shadow-lg transition-transform transform hover:-translate-y-1 active:scale-95 duration-300 ease-in-out">
-              Đơn mua
-            </button>{" "}
-          </Link>
-        </div>
-      </header>
-
-      {/* Spinner Section */}
-
-      {/* Suggested Products Section */}
-      <section className="mt-6 ">
-        <h3 className="text-gray-700 font-bold my-5 text-3xl ">
-          Có thể bạn cũng thích
-        </h3>
-        <div className="grid grid-cols-12 justify-center lg:gap-5 gap-14 mx-auto my-10">
-          {isError ? (
-            <p className="text-red-500">Lỗi khi lấy thông tin sản phẩm</p>
-          ) : products && products.length !== 0 ? (
-            products?.slice(0, 8).map((product: any, index: any) => (
-              <div
-                className="xl:col-span-3 lg:col-span-4 col-span-12 md:col-span-6 lg:w-[290px] w-[350px] mx-auto lg:mx-0"
-                key={index}
-              >
-                <Product
-                  product={product}
-                  handleMouseEnter={handleMouseEnter}
-                  hoveredProductId={hoveredProductId}
-                  hoveredVariantIndex={hoveredVariantIndex}
-                  index={index}
-                />
+    <>
+      <div className="container">
+        {/* Header Section */}
+        <header className=" bg-gradient-to-r from-gray-900 via-gray-500 to-gray-900 text-white rounded-lg p-10 text-center mt-12  mx-auto shadow-2xl transform transition-all duration-500 ease-out hover:scale-105">
+          <h2 className="text-3xl font-extrabold flex items-center justify-center mb-6 tracking-wide">
+            {resultCode == 0 ? (
+              <div className="flex items-center justify-center">
+                <span className="flex items-center justify-center w-12 h-12 rounded-full border-4 border-green-400 text-green-400 mr-3">
+                  ✔
+                </span>
+                <p className="mt-5">Đặt hàng thành công</p>
               </div>
-            ))
-          ) : (
-            <div className="w-full flex flex-col items-center justify-center col-span-12">
-              <img
-                src="https://res.cloudinary.com/dcvu7e7ps/image/upload/v1729832531/m5xu2paczoiy6rmlu4vm.png"
-                alt="No products"
-                className="w-[500px] mb-4"
-              />
-              <span className="text-center font-bold text-2xl text-yellow-500">
-                Không có sản phẩm nào
-              </span>
-            </div>
-          )}
-        </div>
-      </section>
+            ) : resultCode === 1006 ? (
+              <div className="flex items-center justify-center">
+                <span className="text-yellow-400 mr-3 animate-bounce">🔔</span>
+                <p className="mt-5">Thanh toán thất bại</p>
+              </div>
+            ) : (
+              <div className="flex items-center justify-center">
+                <span className="text-yellow-400 mr-3 animate-bounce">🔔</span>
+                <p className="mt-5">Đặt hàng thất bại</p>
+              </div>
+            )}
+          </h2>
+          <p className="text-base mb-8 max-w-xl mx-auto leading-relaxed">
+            Cùng GlowClowthing bảo vệ quyền lợi của bạn - Thường xuyên kiểm tra
+            tin nhắn từ Người bán tại Glow Chat / Chi nhắn & thanh toán khi đơn
+            mua ở trạng thái "Đang giao hàng".
+          </p>
+          <div className="flex justify-center space-x-8">
+            <Link to="/">
+              <button className="bg-white text-gray-900 font-semibold py-3 px-8 rounded-xl shadow-md hover:shadow-lg transition-transform transform hover:-translate-y-1 active:scale-95 duration-300 ease-in-out">
+                Trang chủ
+              </button>
+            </Link>
+            <Link to={`/mypro/myorder/${orderid}`}>
+              <button className="bg-white text-gray-900 font-semibold py-3 px-8 rounded-xl shadow-md hover:shadow-lg transition-transform transform hover:-translate-y-1 active:scale-95 duration-300 ease-in-out">
+                Đơn mua
+              </button>{" "}
+            </Link>
+          </div>
+        </header>
+
+        {/* Spinner Section */}
+
+        {/* Suggested Products Section */}
+        <section className="mt-6 ">
+          <h3 className="text-gray-700 font-bold my-5 text-3xl ">
+            Có thể bạn cũng thích
+          </h3>
+          <div className="grid grid-cols-12 justify-center lg:gap-5 gap-14 mx-auto my-10">
+            {isError ? (
+              <p className="text-red-500">Lỗi khi lấy thông tin sản phẩm</p>
+            ) : products && products.length !== 0 ? (
+              products?.slice(0, 8).map((product: any, index: any) => (
+                <div
+                  className="xl:col-span-3 lg:col-span-4 col-span-12 md:col-span-6 lg:w-[290px] w-[350px] mx-auto lg:mx-0"
+                  key={index}
+                >
+                  <Product
+                    product={product}
+                    handleMouseEnter={handleMouseEnter}
+                    hoveredProductId={hoveredProductId}
+                    hoveredVariantIndex={hoveredVariantIndex}
+                    index={index}
+                  />
+                </div>
+              ))
+            ) : (
+              <div className="w-full flex flex-col items-center justify-center col-span-12">
+                <img
+                  src="https://res.cloudinary.com/dcvu7e7ps/image/upload/v1729832531/m5xu2paczoiy6rmlu4vm.png"
+                  alt="No products"
+                  className="w-[500px] mb-4"
+                />
+                <span className="text-center font-bold text-2xl text-yellow-500">
+                  Không có sản phẩm nào
+                </span>
+              </div>
+            )}
+          </div>
+        </section>
+      </div>{" "}
       <Method />
-    </div>
+    </>
   );
 };
 

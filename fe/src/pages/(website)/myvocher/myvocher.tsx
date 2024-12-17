@@ -59,9 +59,11 @@ const MyVoucher = () => {
     queryFn: getVouchers,
   });
 
+
   const activeVouchers = vouchersData?.data?.filter(
     (voucher: Voucher) => voucher.trang_thai === 1
   ) || [];
+
 
   const totalVouchers = activeVouchers.length;
   const indexOfLastVoucher = currentPage * pageSize;
