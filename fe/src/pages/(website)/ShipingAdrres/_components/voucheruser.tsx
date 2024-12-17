@@ -1,6 +1,6 @@
 import instanceClient from "@/configs/client";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { message, Modal } from "antd";
+import { message, Modal, Spin } from "antd";
 import React, { useEffect, useState } from "react";
 
 interface VoucheruserProps {
@@ -16,7 +16,9 @@ interface VoucheruserProps {
 const Voucheruser: React.FC<VoucheruserProps> = ({
   onSelectVoucher,
   ap,
+  trangthai,
 }: any) => {
+  console.log(trangthai);
   const [selectedDiscount, setSelectedDiscount] = useState<number | null>(null);
   const [giamtoida, setGiamtoida] = useState<number | null>(null);
   const [open, setOpen] = useState(false);
@@ -40,41 +42,47 @@ const Voucheruser: React.FC<VoucheruserProps> = ({
       }
     },
   });
-
-  const handleApply = () => {
-    if (selectedDiscount !== null && clickedIndex !== null) {
-      mutate(clickedIndex, {
-        onSuccess: () => {
-          onSelectVoucher({
-            giam_gia: selectedDiscount,
-            index: clickedIndex,
-            giam_toi_da: giamtoida,
-          });
-          handleCancel();
-        },
-      });
-    } else if (selectedDiscount === null && clickedIndex == null) {
-      onSelectVoucher({ giam_gia: null, index: null });
-      setCode("");
-      handleCancel();
-    } else {
-      message.error("Vui lòng chọn mã giảm giá trước khi áp dụng.");
-    }
-  };
-
+  // const handleApply = () => {
+  //   if (selectedDiscount !== null && clickedIndex !== null) {
+  //     mutate(clickedIndex, {
+  //       onSuccess: () => {
+  //         onSelectVoucher({
+  //           giam_gia: selectedDiscount,
+  //           index: clickedIndex,
+  //           giam_toi_da: giamtoida,
+  //         });
+  //         handleCancel();
+  //       },
+  //     });
+  //   } else {
+  //     onSelectVoucher({ giam_gia: null, index: null });
+  //     message.success("Đã bỏ chọn mã giảm giá.");
+  //     handleCancel();
+  //   }
+  // };
+  const [loading, setLoading] = useState(false);
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setCode(e.target.value.toUpperCase());
-    const value = e.target.value.toUpperCase();
-    if (value === "") {
-      refetch(); // Gọi lại API để hiển thị toàn bộ danh sách nếu code rỗng
-    }
+    setCode(e.target.value);
   };
 
-  const handleSearch = () => {
-    if (code.length >= 6) {
-      refetch(); // Refetch data when search button is clicked and code has a valid length
-    } else {
-      message.error("Mã phải có ít nhất 6 ký tự.");
+  const handleSearch = async () => {
+    setLoading(true);
+    try {
+      if (!code) {
+        // Input rỗng -> hiển thị tất cả
+        await refetch({ code: "" }); // Truyền tham số code rỗng
+        message.success("Hiển thị tất cả mã ưu đãi.");
+      } else if (code.length < 6) {
+        message.error("Mã phải có ít nhất 6 ký tự.");
+      } else {
+        // Input có mã -> tìm kiếm
+        await refetch({ code }); // Tìm kiếm theo mã
+        message.success("Tìm kiếm thành công!");
+      }
+    } catch {
+      message.error("Có lỗi xảy ra khi tải dữ liệu.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -87,11 +95,21 @@ const Voucheruser: React.FC<VoucheruserProps> = ({
     giam_gia: number;
     giam_toi_da: number;
   }) => {
-    const newIndex = clickedIndex === index ? null : index;
-    setClickedIndex(newIndex);
-    setSelectedDiscount(newIndex ? giam_gia : null);
-    setGiamtoida(newIndex ? giam_toi_da : null);
+    if (clickedIndex === index) {
+      // Nếu voucher đã được chọn -> Bỏ chọn
+      setClickedIndex(null);
+      setSelectedDiscount(null);
+      setGiamtoida(null);
+      onSelectVoucher({ giam_gia: null, index: null }); // Hủy áp dụng voucher
+    } else {
+      // Chọn voucher mới
+      setClickedIndex(index);
+      setSelectedDiscount(giam_gia);
+      setGiamtoida(giam_toi_da);
+      onSelectVoucher({ giam_gia, index, giam_toi_da }); // Áp dụng voucher ngay lập tức
+    }
   };
+
   // console.log(ap);
   const { data, refetch } = useQuery({
     queryKey: ["Voucher_LIST"],
@@ -167,18 +185,14 @@ const Voucheruser: React.FC<VoucheruserProps> = ({
                 onChange={handleChange}
               />
               <button
-                className={`w-40 px-4 py-2 rounded-md ${
-                  code.length >= 6
-                    ? "bg-teal-500 text-white"
-                    : "bg-gray-200 text-gray-500 cursor-not-allowed"
-                }`}
+                className={`w-40 px-4 py-2 rounded-md ${"bg-teal-500 text-white"}`}
                 onClick={handleSearch}
                 // disabled={code.length < 6}
               >
-                Tìm kiếm
+                {loading ? <Spin size="small" /> : "Tìm kiếm"}
               </button>
             </div>
-            <div className="grid grid-cols-1 gap-5 overflow-y-auto h-96">
+            <div className="grid grid-cols-1 gap-5 overflow-y-auto ">
               {voucher && voucher.length > 0 ? (
                 vouchertrue?.map((item: any, index: number) => (
                   <div
@@ -267,14 +281,14 @@ const Voucheruser: React.FC<VoucheruserProps> = ({
                 />
               )}
             </div>
-            <div className="mt-5">
+            {/* <div className="mt-5">
               <button
                 className="bg-red-600 text-white w-full py-3 font-semibold hover:bg-red-700"
                 onClick={handleApply}
               >
                 Áp dụng
               </button>
-            </div>
+            </div> */}
           </div>
         </div>
       </Modal>

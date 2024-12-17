@@ -191,17 +191,29 @@ const Footer = () => {
                 <div className="*:px-1">
                   <i className="fa-regular fa-phone-volume text-lg" />
                   <span className="text-base">
-                    {websiteInfo?.so_dien_thoai_dat_hang}
+                    <a href={`tel:${websiteInfo?.so_dien_thoai_dat_hang}`}>
+                      {websiteInfo?.so_dien_thoai_dat_hang}
+                    </a>
                   </span>
                 </div>
                 <div className="*:px-1">
                   <i className="fa-light fa-envelope text-lg" />
-                  <span className="mx-1">{websiteInfo?.email}</span>
+                  <span className="mx-1">
+                    <a href={`mailto:${websiteInfo?.email}`}>
+                      {websiteInfo?.email}
+                    </a>
+                  </span>
                 </div>
                 <div className="*:px-1 flex">
                   <i className="fa-regular fa-location-dot text-lg" />
                   <span className="mx-2 lg:w-full w-48">
-                    {websiteInfo?.dia_chi}
+                    <a
+                      href={`https://www.google.com/maps/search/${encodeURIComponent(websiteInfo?.dia_chi || "")}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {websiteInfo?.dia_chi}
+                    </a>
                   </span>
                 </div>
               </div>

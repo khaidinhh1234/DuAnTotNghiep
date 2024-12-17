@@ -271,7 +271,7 @@ const MyVoucher = () => {
   });
   console.log(vouchersData);
   const activeVouchers =
-    vouchersData?.data.filter(
+    vouchersData?.data?.filter(
       (voucher: Voucher) =>
         voucher.trang_thai === 1 && voucher.da_thu_thap === 1
     ) || [];

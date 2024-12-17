@@ -16,7 +16,7 @@ export function ActionLog() {
       return response.data;
     },
   });
-  // console.log(lichsu);
+  console.log(lichsu);
   const tableNamesWithAccents: { [key: string]: string } = {
     lien_hes: "Liên hệ",
     anh_bien_thes: "Ảnh biến thể",
@@ -49,7 +49,7 @@ export function ActionLog() {
       thoi_gian: reversedDate + " " + time,
       timedate: item?.created_at,
       ten_vai_tro: item?.ten_vai_tro,
-      nhanvien: item?.ten,
+      nhanvien: item.ho + " " + item?.ten,
       mo_ta: item?.mo_ta,
       dia_chi_ip: item?.dia_chi_ip,
     };
