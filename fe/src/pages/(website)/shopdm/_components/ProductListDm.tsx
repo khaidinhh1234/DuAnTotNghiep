@@ -83,7 +83,7 @@ const ProductsListDM = ({ products = [] }: any) => {
                 onClick={handleLoadMore}
                 className="px-10 py-3 mt-4 btn-black rounded-lg mb-4 font-semibold transition duration-200"
               >
-                Xem thêm 
+                Xem thêm <i className="fa-solid fa-chevron-down"></i>
               </button>
             </div>
           )}
