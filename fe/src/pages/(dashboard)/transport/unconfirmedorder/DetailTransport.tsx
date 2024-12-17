@@ -21,6 +21,11 @@ interface Transport {
   ghi_chu: string;
 }
 const DetailTransport = ({ record }: any) => {
+  const [visibleProducts, setVisibleProducts] = useState(2);
+  const handleLoadMore = () => {
+    setVisibleProducts(products.length);
+  };
+
   const [open, setOpen] = useState(false);
   const queryClient = useQueryClient();
   //
@@ -60,123 +65,6 @@ const DetailTransport = ({ record }: any) => {
       setIsWebcamVisible(false);
     }
   }, [record.trang_thai_van_chuyen, isImageSaved]);
-
-  // Chụp ảnh bằng webcam
-  // const capturePhoto = () => {
-  //   if (record.trang_thai_van_chuyen !== "Đang giao hàng") {
-  //     message.success(
-  //       "Chỉ có thể chụp ảnh khi trạng thái là 'Đang giao hàng'."
-  //     );
-  //     return;
-  //   }
-
-  //   if (webcamRef.current) {
-  //     const imageSrc = webcamRef.current.getScreenshot();
-  //     setUrl(imageSrc);
-  //   }
-  // };
-  // const deletePhoto = () => {
-  //   setUrl(null); // Đặt lại giá trị ảnh về null
-  //   setShowNoteInput(false); // Ẩn trường ghi chú nếu đang hiển thị
-  //   message.success("Đã xóa ảnh thành công.");
-  // };
-
-  // Xử lý giao hàng thất bại
-  // const handleDeliveryFailure = () => {
-  //   setShowNoteInput(true); // Hiện trường ghi chú cho lần giao hàng thất bại
-
-  //   if (note.trim() === "") {
-  //     message.warning("Vui lòng nhập ghi chú trước khi tiếp tục.");
-  //     return;
-  //   }
-
-  //   const newFailedAttempts = failedAttempts + 1;
-  //   setFailedAttempts(newFailedAttempts);
-  //   setNotes((prevNotes) => ({
-  //     ...prevNotes,
-  //     [`lan${newFailedAttempts}`]: note,
-  //   })); // Lưu ghi chú vào đối tượng notes
-  //   setNote(""); // Xóa nội dung ghi chú sau khi lưu
-
-  //   if (newFailedAttempts >= 3) {
-  //     setIsConfirmFailureVisible(true); // Hiện nút xác nhận thất bại sau lần thất bại thứ 3
-  //     setIsWebcamVisible(false); // Ẩn webcam sau 3 lần thất bại
-  //   } else {
-  //     message.success(`Giao hàng thất bại lần ${newFailedAttempts}.`);
-  //   }
-  // };
-
-  // Lưu ghi chú cho lần giao hàng thất bại hiện tại
-  // const handleSaveNote = () => {
-  //   if (!note.trim()) {
-  //     message.error("Vui lòng nhập ghi chú.");
-  //     return;
-  //   }
-
-  //   // Lưu ghi chú cho lần giao hàng thất bại tương ứng
-  //   const updatedNotes = { ...notes };
-  //   if (failedAttempts === 1) updatedNotes.lan1 = note.trim();
-  //   if (failedAttempts === 2) updatedNotes.lan2 = note.trim();
-  //   if (failedAttempts === 3) updatedNotes.lan3 = note.trim();
-
-  //   setNotes((prevNotes) => ({
-  //     ...prevNotes,
-  //     [`lan${failedAttempts}`]: note.trim(),
-  //   }));
-  //   setNote(""); // Xóa trường nhập
-  //   setShowNoteInput(false); // Ẩn trường ghi chú sau khi lưu
-  // };
-
-  // Xử lý xác nhận giao hàng thành công hoặc thất bại
-  // const handleSave = async () => {
-  //   try {
-  //     setLoading(true);
-  //     let imageUrl = null;
-
-  //     if (!url) {
-  //       message.success("Vui lòng chụp ảnh trước khi xác nhận giao hàng.");
-  //       return;
-  //     }
-  //     const fetchResponse = await fetch(url);
-  //     const blob = await fetchResponse.blob();
-  //     const file = new File([blob], "photo.jpg", { type: "image/jpeg" });
-
-  //     // Tải ảnh lên Cloudinary hoặc dịch vụ khác
-  //     imageUrl = await uploadToCloudinary(file);
-
-  //     if (!imageUrl) {
-  //       message.success("Lỗi khi upload ảnh. Vui lòng thử lại.");
-  //       return;
-  //     }
-  //     // const ghi_chu_array = Object.values(notes);
-  //     const ghi_chu_string = JSON.stringify(notes);
-
-  //     const response: any = await mutate({
-  //       id: record.id,
-  //       action: "Xác nhận giao hàng",
-  //       imageUrl: imageUrl,
-  //       ghi_chu: ghi_chu_string, // Gửi ghi chú dưới dạng mảng hoặc đối tượng JSON
-  //       failedAttempts: failedAttempts,
-  //     });
-
-  //     if (response && response.data) {
-  //       alert("Đã lưu ảnh và xác nhận giao hàng thành công!");
-  //       setIsImageSaved(true); // Đánh dấu ảnh đã lưu
-  //       setFailedAttempts(0); // Đặt lại số lần thất bại
-  //       setNotes({}); // Xóa ghi chú
-  //       setUrl(null); // Xóa ảnh sau khi gửi
-  //       setIsWebcamVisible(false); // Ẩn webcam sau khi lưu
-  //     } else {
-  //       message.success("Có lỗi xảy ra trong quá trình xác nhận giao hàng.");
-  //     }
-  //   } catch (error) {
-  //     console.error("Có lỗi xảy ra:", error);
-  //     message.success("Lỗi khi lưu ảnh hoặc xác nhận đơn hàng!");
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-
   const formatDate = (dateString: any) => {
     if (!dateString) return "";
 
@@ -192,24 +80,28 @@ const DetailTransport = ({ record }: any) => {
     return `${day}/${month}/${year} ${hours}:${minutes}`;
   };
 
-  const id = record?.id;
+  // const id = record?.id;
   // console.log(id)
   const { data } = useQuery({
-    queryKey: ["SHIPPER"],
+    queryKey: ["VANCHUYEN" , record?.id],
     queryFn: async () => {
-      const response = await instance.get(`/vanchuyen/${id}`);
+      try {
+        const response = await instance.get(`/vanchuyen/${record?.id}`);
       return response.data;
+      } catch (error) {
+        throw new Error(error as any);
+      }
     },
   });
-
+  console.log("data:", data)
   const products = data?.data?.van_chuyen?.don_hang?.chi_tiets?.map(
     (item: any) => {
       return {
         ...item,
       };
     }
-  );
-  // console.log(products);
+  ) || [];
+  console.log(products);
   const vanchuyenData = data?.data?.van_chuyen?.don_hang;
   const shipper = data?.data?.van_chuyen?.shipper;
   const mavanchuyen = data?.data?.van_chuyen?.ma_van_chuyen;
@@ -220,50 +112,6 @@ const DetailTransport = ({ record }: any) => {
   };
   const tong = data?.data;
 
-  // const { mutate } = useMutation({
-  //   mutationFn: async ({
-  //     id,
-  //     action,
-  //     imageUrl,
-  //     ghi_chu,
-  //     failedAttempts,
-  //   }: any) => {
-  //     try {
-  //       let response;
-  //       const shipperXacNhan = failedAttempts >= 3 ? "2" : "1"; // Xác định trạng thái xác nhận của shipper
-  //       // Gọi API xác nhận giao hàng
-  //       if (action === "Xác nhận giao hàng") {
-  //         response = await instance.put(
-  //           `/vanchuyen/xac-nhan-van-chuyen/${id}`,
-  //           {
-  //             anh_xac_thuc: imageUrl,
-  //             shipper_xac_nhan: shipperXacNhan,
-  //             ghi_chu: ghi_chu,
-  //             so_lan_giao: failedAttempts,
-  //           }
-  //         );
-  //       } else {
-  //         console.log("Đang cập nhật trạng thái vận chuyển:", {
-  //           trang_thai_van_chuyen: action,
-  //           id: [id],
-  //         });
-
-  //         response = await instance.put("/vanchuyen/trang-thai-van-chuyen", {
-  //           trang_thai_van_chuyen: action,
-  //           id: [id],
-  //         });
-  //       }
-  //       return response.data; // Trả về dữ liệu phản hồi
-  //     } catch (error) {
-  //       console.error("Lỗi khi thực hiện yêu cầu API:", error);
-  //       message.error("Có lỗi xảy ra khi xác nhận giao hàng.");
-  //       throw error; // Ném lại lỗi để xử lý bên ngoài nếu cần
-  //     }
-  //   },
-  //   onSuccess: () => {
-  //     queryClient.invalidateQueries({ queryKey: ["vanchuyen"] }); // Làm mới dữ liệu sau khi thành công
-  //   },
-  // });
 
   return (
     <div>
@@ -310,6 +158,7 @@ const DetailTransport = ({ record }: any) => {
                 }`}
               > */}
               <div
+
                 className={`${
                   record.trang_thai_van_chuyen === "Chờ xử lý"
                     ? "bg-blue-500" // Chờ xác nhận: màu vàng nhạt
@@ -321,6 +170,7 @@ const DetailTransport = ({ record }: any) => {
                           ? "bg-red-500" // Giao hàng thất bại: màu đ��
                           : "bg-red-500"
                 } text-white px-2 py-1 font-bold rounded-lg`}
+
               >
                 {record.trang_thai_van_chuyen === "chờ xử lý"
                   ? "Chờ xử lý" // Chờ xác nhận: màu vàng nhạt
@@ -348,62 +198,77 @@ const DetailTransport = ({ record }: any) => {
                     </tr>
                   </thead>
                   <tbody>
-                    {products?.map((item: any, index: number) => (
-                      <tr key={index} className="my-5">
-                        <td>
-                          <div className="flex gap-5 items-center  w-[50%] my-2">
-                            <img
-                              src={
-                                item?.bien_the_san_pham?.san_pham
-                                  ?.anh_san_pham || ""
-                              }
-                              alt={""}
-                              className="w-20 h-20"
-                            />
-                            <div>
-                              <h1 className=" font-bold truncate w-40">
-                                {
-                                  item?.bien_the_san_pham?.san_pham
-                                    ?.ten_san_pham
+                    {products && products.length > 0 ? (
+                      products.slice(0, visibleProducts).map((item: any, index: number) => (
+                        <tr key={index} className="my-5">
+                          <td>
+                            <div className="flex gap-5 items-center  w-[50%] my-2">
+                              <img
+                                src={
+                                  item?.bien_the_san_pham?.san_pham?.anh_san_pham || ""
                                 }
-                              </h1>
-                              <div className="flex gap-2">
-                                <p className="text-base">
-                                  Màu :{" "}
-                                  <span>
-                                    {" "}
-                                    {
-                                      item?.chi_tiets?.bien_the_san_pham
-                                        ?.mau_bien_the?.ten_mau_sac
-                                    }
-                                  </span>
-                                </p>
-                                <p className="text-base">
-                                  Size :{" "}
-                                  <span>
-                                    {" "}
-                                    {
-                                      item?.bien_the_san_pham
-                                        ?.kich_thuoc_bien_the?.kich_thuoc
-                                    }
-                                  </span>
-                                </p>
+                                alt={""}
+                                className="w-20 h-20"
+                              />
+                              <div>
+                                <h1 className=" font-bold truncate w-40">
+                                  {
+                                    item?.bien_the_san_pham?.san_pham
+                                      ?.ten_san_pham
+                                  }
+                                </h1>
+                                <div className="flex gap-2">
+                                  <p className="text-base">
+                                    Màu :{" "}
+                                    <span>
+                                      {" "}
+                                      {
+                                        item?.bien_the_san_pham
+                                          ?.mau_bien_the?.ten_mau_sac
+                                      }
+                                    </span>
+                                  </p>
+                                  <p className="text-base">
+                                    Size :{" "}
+                                    <span>
+                                      {" "}
+                                      {
+                                        item?.bien_the_san_pham
+                                          ?.kich_thuoc_bien_the?.kich_thuoc
+                                      }
+                                    </span>
+                                  </p>
+                                </div>
                               </div>
                             </div>
-                          </div>
-                        </td>
-                        <td className="text-center w-30 font-semibold  w-[20%]">
-                          {" "}
-                          {item?.so_luong}
-                        </td>
-                        <td className="text-center w-[20%] font-semibold  ">
-                          {item?.gia?.toLocaleString()} VNĐ
-                        </td>
-                        <td className="text-center w-[35%] font-semibold">
-                          {item?.thanh_tien?.toLocaleString()} VNĐ
-                        </td>
+                          </td>
+                          <td className="text-center w-30 font-semibold  w-[20%]">
+                            {" "}
+                            {item?.so_luong}
+                          </td>
+                          <td className="text-center w-[20%] font-semibold  ">
+                            {item?.gia?.toLocaleString()} VNĐ
+                          </td>
+                          <td className="text-center w-[35%] font-semibold">
+                            {item?.thanh_tien?.toLocaleString()} VNĐ
+                          </td>
+                        </tr>
+                      ))
+                    ) : (
+                      <tr>
+                        <td colSpan={4}>Không có sản phẩm</td>
                       </tr>
-                    ))}
+                    )}
+                    {visibleProducts < products.length && (
+                      <div className="flex  ">
+                        <div
+                          onClick={handleLoadMore}
+                          className="font-bold"
+                        >
+                           <i className="fa-solid fa-share"></i> Xem thêm ...
+                        </div>
+                      </div>
+                    )}
                   </tbody>
                 </table>
                 <div className="grid grid-cols-2 gap-5 my-5">
@@ -423,19 +288,18 @@ const DetailTransport = ({ record }: any) => {
                     <div className="flex justify-between">
                       <p>Trạng thái vận chuyển</p>{" "}
                       <span
-                        className={`   ${
-                          record.trang_thai_van_chuyen == "Chờ xử lý"
-                            ? "bg-blue-500"
-                            : record.trang_thai_van_chuyen == "Đang giao hàng"
-                              ? "bg-purple-500"
+                        className={`   ${record.trang_thai_van_chuyen == "Chờ xử lý"
+                          ? "bg-blue-500"
+                          : record.trang_thai_van_chuyen == "Đang giao hàng"
+                            ? "bg-purple-500"
+                            : record.trang_thai_van_chuyen ==
+                              "Giao hàng thành công"
+                              ? "bg-green-500"
                               : record.trang_thai_van_chuyen ==
-                                  "Giao hàng thành công"
-                                ? "bg-green-500"
-                                : record.trang_thai_van_chuyen ==
-                                    "Giao hàng thất bại"
-                                  ? "bg-red-500"
-                                  : "bg-red-500"
-                        }
+                                "Giao hàng thất bại"
+                                ? "bg-red-500"
+                                : "bg-red-500"
+                          }
                         } text-white px-2 font-bold rounded-lg h-6`}
                       >
                         {" "}
@@ -446,10 +310,10 @@ const DetailTransport = ({ record }: any) => {
                             : record.trang_thai_van_chuyen == "Đang giao hàng"
                               ? "Đang giao hàng"
                               : record.trang_thai_van_chuyen ==
-                                  "Giao hàng thành công"
+                                "Giao hàng thành công"
                                 ? "Giao hàng thành công"
                                 : record.trang_thai_van_chuyen ==
-                                    "Giao hàng thất bại"
+                                  "Giao hàng thất bại"
                                   ? "Giao hàng thất bại"
                                   : record.trang_thai_van_chuyen}
                       </span>
@@ -488,8 +352,8 @@ const DetailTransport = ({ record }: any) => {
                     <span>
                       {tong?.van_chuyen?.don_hang?.so_tien_giam_gia
                         ? tong?.van_chuyen?.don_hang?.so_tien_giam_gia?.toLocaleString(
-                            "vi-VN"
-                          )
+                          "vi-VN"
+                        )
                         : 0}{" "}
                       VNĐ
                     </span>

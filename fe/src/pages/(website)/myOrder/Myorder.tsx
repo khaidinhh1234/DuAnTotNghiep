@@ -38,9 +38,9 @@ const MyOrder = () => {
       return response.data;
     },
     getNextPageParam: (lastPage) => {
-      if (!lastPage || !lastPage.data || !lastPage.data.pagination)
-        return undefined;
-      return lastPage.data.pagination.has_more_pages
+
+      return lastPage .data.pagination.has_more_pages
+
         ? lastPage.data.pagination.current_page + 1
         : undefined;
     },
