@@ -7,7 +7,10 @@ import Webcam from "react-webcam";
 
 const TransportDetail = ({ record }: any) => {
   const [modalWidth, setModalWidth] = useState(400);
-
+  const [visibleProducts, setVisibleProducts] = useState(2);
+  const handleLoadMore = () => {
+    setVisibleProducts(products.length);
+  };
   useEffect(() => {
     const updateWidth = () => {
       setModalWidth(window.innerWidth >= 768 ? 1200 : 400);
@@ -41,7 +44,7 @@ const TransportDetail = ({ record }: any) => {
         ...item,
       };
     }
-  );
+  ) || [];
   const thongtin = data?.data?.thong_tin;
   // console.log(thongtin);
   const donhang = data?.data?.van_chuyen?.don_hang;
@@ -208,53 +211,6 @@ const TransportDetail = ({ record }: any) => {
     }
   };
 
-  // const handleSendNote = async () => {
-  //   try {
-  //     setLoading(true);
-  //     if (!currentNote) {
-  //       message.error("Vui lòng nhập ghi chú trước khi gửi");
-  //       setLoading(false);
-  //       return;
-  //     }
-
-  //     const newNote = currentNote.trim();
-  //     const updatedNotes = [...notes, newNote];
-  //     setNotes(updatedNotes);
-  //     // localStorage.setItem('deliveryNotes', JSON.stringify(updatedNotes));
-  //     setCurrentNote("");
-
-  //     // Gửi ghi chú lên server
-  //     const ghiChuCapNhat = updatedNotes.reduce((acc, note, index) => {
-  //       acc[`lan${index + 1}`] = note;
-  //       return acc;
-  //     }, {});
-
-  //     const response = await instance.put(
-  //       `/vanchuyen/xac-nhan-van-chuyen/${record.id}`,
-  //       {
-  //         ghi_chu: ghiChuCapNhat,
-  //         shipper_xac_nhan: "2",
-  //       }
-  //     );
-
-  //     if (response.data.status) {
-  //       message.success("Ghi chú đã được gửi thành công");
-  //       setNoteSubmissionCount(noteSubmissionCount + 1); // Tăng số lần gửi ghi chú
-
-  //       // Kiểm tra nếu đã gửi 2 lần
-  //       if (noteSubmissionCount + 1 === 2) {
-  //         setButtonLabel("Xác nhận giao hàng thất bại");
-  //       }
-  //     } else {
-  //       message.error(response.data.message || "Có lỗi xảy ra");
-  //     }
-  //   } catch (error) {
-  //     console.error("Lỗi khi gửi ghi chú:", error);
-  //     message.error("Lỗi khi gửi ghi chú");
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
   const [isDeliveryFailed, setIsDeliveryFailed] = useState(false);
   const handleSendNote = async () => {
     try {
@@ -355,9 +311,9 @@ const TransportDetail = ({ record }: any) => {
           </div>
           <div className="flex flex-col md:flex-row items-start space-y-4 md:space-x-4 mb-4">
             <div className="w-full md:w-3/4">
-              {products ? (
-                products.map((product: any) => (
-                  <div key={product.id} className="flex mb-4 border-b pb-4">
+              {products && products.length > 0 ? (
+                      products.slice(0, visibleProducts).map((product: any, index: number) => (
+                  <div key={index} className="flex mb-4 border-b pb-4">
                     <img
                       src={product?.bien_the_san_pham?.san_pham?.anh_san_pham}
                       alt="Product Image"
@@ -405,6 +361,16 @@ const TransportDetail = ({ record }: any) => {
               ) : (
                 <p>Loading...</p>
               )}
+              {visibleProducts < products.length && (
+                      <div className="flex  ">
+                        <div
+                          // onClick={handleLoadMore}
+                          className="font-bold"
+                        >
+                           <i className="fa-solid fa-share"></i> Xem thêm ...
+                        </div>
+                      </div>
+                    )}
             </div>
           </div>
         </div>
@@ -538,8 +504,7 @@ const TransportDetail = ({ record }: any) => {
               </div>
             </div>
           </div>
-
-          {/* Action Buttons */}
+          {/* trang th */}
           <div className="flex justify-between mt-4">
             <div className="flex flex-col gap-2 w-full">
               {/* Nút Giao hàng */}

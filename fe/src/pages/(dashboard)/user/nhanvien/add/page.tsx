@@ -137,6 +137,14 @@ const UsersNhanvienAdd = () => {
                           pattern: /^[^\s]+(\s+[^\s]+)*$/,
                           message: "Vui lòng nhập họ không chứa ký tự trắng!",
                         },
+                        {
+                          min: 2,
+                          message: "Họ của nhân viên phải có ít nhất 2 ký tự!",
+                        },
+                        // {
+                        //   max: 2,
+                        //   message: "Họ của nhân viên phải có nhiều nhất 50 ký tự!",
+                        // }
                       ]}
                     >
                       <Input placeholder="Nhập Họ của Nhân viên" />
@@ -154,6 +162,14 @@ const UsersNhanvienAdd = () => {
                           pattern: /^[^\s]+(\s+[^\s]+)*$/,
                           message: "Vui lòng nhập tên không chứa ký tự trắng!",
                         },
+                        {
+                          min: 2,
+                          message: "Tên của nhân viên phải có ít nhất 2 ký tự!",
+                        },
+                        // {
+                        //   max: 2,
+                        //   message: "Tên của nhân viên phải có nhiều nhất 50 ký tự!",
+                        // }
                       ]}
                     >
                       <Input placeholder="Nhập tên của Nhân viên" />
@@ -248,7 +264,7 @@ const UsersNhanvienAdd = () => {
                             const birthDate = new Date(value);
                             let age =
                               today.getFullYear() - birthDate.getFullYear();
-                            if (age < 3) {
+                            if (age < 17) {
                               return Promise.reject(
                                 new Error("Nhân viên yêu cầu độ tuổi phù hợp!")
                               );
@@ -280,8 +296,7 @@ const UsersNhanvienAdd = () => {
                         },
 
                         {
-                          pattern:
-                            /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{6,}$/,
+                          pattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]{6,}$/,
                           message:
                             "Mật khẩu phải chứa ít nhất 1 chữ hoa và 1 số!",
                         },
