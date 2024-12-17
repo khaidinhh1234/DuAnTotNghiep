@@ -17,6 +17,7 @@ import {
 } from "antd";
 import React, { useEffect, useState } from "react";
 import DetailTransport from "./DetailTransport";
+import OrderDetail from "../../_component/Detaile";
 
 type TableRowSelection<T extends object = object> =
   TableProps<T>["rowSelection"];
@@ -114,56 +115,56 @@ const TableUncomfirmedOrder: React.FC = () => {
     }
   }, [searchText, dateRange, activeTab, data]);
 
-  const { mutate } = useMutation({
-    mutationFn: async (data: React.Key[]) => {
-      try {
-        const trangthais =
-          trangthai === "1"
-            ? "Đang giao hàng"
-            : trangthai === "2"
-              ? "Giao hàng thành công"
-              : trangthai === "3"
-                ? "Giao hàng thất bại"
-                : "Không rõ";
+  // const { mutate } = useMutation({
+  //   mutationFn: async (data: React.Key[]) => {
+  //     try {
+  //       const trangthais =
+  //         trangthai === "1"
+  //           ? "Đang giao hàng"
+  //           : trangthai === "2"
+  //             ? "Giao hàng thành công"
+  //             : trangthai === "3"
+  //               ? "Giao hàng thất bại"
+  //               : "Không rõ";
 
-        const response = await instance.put("vanchuyen/trang-thai-van-chuyen", {
-          trang_thai_van_chuyen: trangthais,
-          id: data,
-        });
-        const error = response.data.message;
-        start();
-        if (error === "Cập nhật trạng thái đơn hàng thành công") {
-          message.open({
-            type: "success",
-            content: error,
-          });
-        } else {
-          message.open({
-            type: "success",
-            content: error,
-          });
-        }
-        return response.data;
-      } catch (error: any) {
-        console.error(error.message);
-        throw new Error(error.message);
-      }
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["vanchuyen"],
-      });
-      setLoading(false);
-    },
-    onError: (error: any) => {
-      console.error("Error updating order:", error.message);
-      message.open({
-        type: "error",
-        content: `Cập nhật trạng thái đơn hàng thất bại: ${error.message}`,
-      });
-      setLoading(false);
-    },
-  });
+  //       const response = await instance.put("vanchuyen/trang-thai-van-chuyen", {
+  //         trang_thai_van_chuyen: trangthais,
+  //         id: data,
+  //       });
+  //       const error = response.data.message;
+  //       start();
+  //       if (error === "Cập nhật trạng thái đơn hàng thành công") {
+  //         message.open({
+  //           type: "success",
+  //           content: error,
+  //         });
+  //       } else {
+  //         message.open({
+  //           type: "success",
+  //           content: error,
+  //         });
+  //       }
+  //       return response.data;
+  //     } catch (error: any) {
+  //       console.error(error.message);
+  //       throw new Error(error.message);
+  //     }
+  //   },
+  //   onSuccess: () => {
+  //     queryClient.invalidateQueries({
+  //       queryKey: ["vanchuyen"],
+  //     });
+  //     setLoading(false);
+  //   },
+  //   onError: (error: any) => {
+  //     console.error("Error updating order:", error.message);
+  //     message.open({
+  //       type: "error",
+  //       content: `Cập nhật trạng thái đơn hàng thất bại: ${error.message}`,
+  //     });
+  //     setLoading(false);
+  //   },
+  // });
 
   // const { data, isLoading } = useQuery({
   //   queryKey: ["vanchuyen"],
@@ -222,8 +223,9 @@ const TableUncomfirmedOrder: React.FC = () => {
       title: "Mã đơn hàng",
       dataIndex: "don_hang_id",
       key: "don_hang_id",
-      render: (text) => <a>{text}</a>,
+      render: (text) => <OrderDetail record={text} />,
     },
+
     {
       title: "Ngày tạo",
       dataIndex: "created_at",

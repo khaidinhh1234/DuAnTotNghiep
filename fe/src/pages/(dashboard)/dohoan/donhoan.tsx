@@ -19,6 +19,7 @@ import type { TableColumnsType, TableProps } from "antd";
 // import Highlighter from "react-highlight-words";
 import instance from "@/configs/admin";
 import RefundDetail from "./RefundDetail";
+import OrderDetail from "../_component/Detaile";
 
 const { RangePicker } = DatePicker;
 const { Search } = Input;
@@ -169,6 +170,11 @@ const RefundRequests: React.FC = () => {
       dataIndex: ["don_hang", "ma_don_hang"],
       key: "ma_don_hang",
       width: "15%",
+      render: (_, record) => (
+        <div className="">
+          <OrderDetail record={record?.don_hang?.ma_don_hang} />
+        </div>
+      ),
     },
     {
       title: "Số tiền hoàn",

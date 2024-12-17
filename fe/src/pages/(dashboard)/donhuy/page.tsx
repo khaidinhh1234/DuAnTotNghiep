@@ -21,6 +21,7 @@ import instance from "@/configs/admin";
 import DonhuyDetail from "./detail";
 import FormatDate from "@/components/hook/formatdata";
 import Notehuy from "./notehuy";
+import OrderDetail from "../_component/Detaile";
 // import RefundDetail from "./RefundDetail";
 
 const { RangePicker } = DatePicker;
@@ -177,6 +178,7 @@ const Donhuy: React.FC = () => {
       dataIndex: "ma_don_hang",
       key: "ma_don_hang",
       width: "10%",
+      render: (text) => <OrderDetail record={text} />,
       sorter: (a: any, b: any) => a.ma_don_hang.localeCompare(b.ma_don_hang),
     },
     {
