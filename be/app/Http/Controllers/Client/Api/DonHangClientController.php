@@ -189,8 +189,8 @@ class DonHangClientController extends Controller
                     if ($order->chiTiets->sum('thanh_tien') < 500000) {
                         return $order->chiTiets->sum('thanh_tien') + 20000;
                     }
-                    if ($donHang->sanPham->KhuyenMai) {
-                        return $order->chiTiets->sum('thanh_tien') - $donHang->sanPham->KhuyenMai->giam_gia;
+                    if ($order->so_tien_giam_gia != 0) {
+                        return $order->chiTiets->sum('thanh_tien') - $order->so_tien_giam_gia;
                     }
                     return $order->chiTiets->sum('thanh_tien');
                 });

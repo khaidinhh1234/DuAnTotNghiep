@@ -312,11 +312,15 @@ const TransportDetail = ({ record }: any) => {
           <div className="flex flex-col md:flex-row items-start space-y-4 md:space-x-4 mb-4">
             <div className="w-full md:w-3/4">
               {products && products.length > 0 ? (
-                      products.slice(0, visibleProducts).map((product: any, index: number) => (
+                products.slice(0, visibleProducts).map((product: any, index: number) => (
                   <div key={index} className="flex mb-4 border-b pb-4">
                     <img
-                      src={product?.bien_the_san_pham?.san_pham?.anh_san_pham}
-                      alt="Product Image"
+                      src={
+                        product?.bien_the_san_pham?.anh_bien_the?.length > 0
+                          ? product?.bien_the_san_pham?.anh_bien_the[0]?.duong_dan_anh
+                          : ""
+                      }
+                      alt={product?.bien_the_san_pham?.san_pham?.ten_san_pham || "Ảnh sản phẩm"}
                       className="w-20 h-20 md:w-24 md:h-28 object-cover rounded mr-4"
                     />
                     <div className="flex flex-col justify-between w-full">
@@ -362,15 +366,15 @@ const TransportDetail = ({ record }: any) => {
                 <p>Loading...</p>
               )}
               {visibleProducts < products.length && (
-                      <div className="flex  ">
-                        <div
-                          // onClick={handleLoadMore}
-                          className="font-bold"
-                        >
-                           <i className="fa-solid fa-share"></i> Xem thêm chi tiết
-                        </div>
-                      </div>
-                    )}
+                <div className="flex  ">
+                  <div
+                    // onClick={handleLoadMore}
+                    className="font-bold"
+                  >
+                    <i className="fa-solid fa-share"></i> Xem thêm chi tiết
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -435,10 +439,14 @@ const TransportDetail = ({ record }: any) => {
                       className="flex flex-col sm:flex-row mb-4 border-b pb-4"
                     >
                       <img
-                        src={product?.bien_the_san_pham?.san_pham?.anh_san_pham}
-                        alt="Product Image"
-                        className="w-20 h-20 sm:w-24 sm:h-28 object-cover rounded mr-4"
-                      />
+                      src={
+                        product?.bien_the_san_pham?.anh_bien_the?.length > 0
+                          ? product?.bien_the_san_pham?.anh_bien_the[0]?.duong_dan_anh
+                          : ""
+                      }
+                      alt={product?.bien_the_san_pham?.san_pham?.ten_san_pham || "Ảnh sản phẩm"}
+                      className="w-20 h-20 md:w-24 md:h-28 object-cover rounded mr-4"
+                    />
                       <div className="flex flex-col justify-between w-full">
                         <h3 className="text-sm sm:text-lg font-semibold truncate hover:text-red-500 cursor-pointer">
                           {product?.bien_the_san_pham?.san_pham?.ten_san_pham ||
@@ -509,7 +517,7 @@ const TransportDetail = ({ record }: any) => {
             <div className="flex flex-col gap-2 w-full">
               {/* Nút Giao hàng */}
               {record.trang_thai_van_chuyen === "Chờ xử lý" ||
-              record.trang_thai_van_chuyen === "Chờ lấy hàng" ? (
+                record.trang_thai_van_chuyen === "Chờ lấy hàng" ? (
                 <button
                   className="w-full py-2 border bg-blue-600 rounded-lg text-white hover:bg-blue-700"
                   onClick={() => {

@@ -146,9 +146,8 @@ console.log(walletBalance)
 
         <div className="text-gray-500 text-sm mb-6">
           Nhấn "Tiếp tục", bạn đã đồng ý tuân theo{'           Số tiền rút tối thiểu là 50.0000đ  '}
-          <a href="#" className="text-blue-500 underline">Điều khoản sử dụng</a>{' '}
-          và{' '}
-          <a href="#" className="text-blue-500 underline">Chính sách bảo mật</a>
+          <p className="text-gray-500 ">Điều khoản sử dụng và Chính sách bảo mật
+          </p>
         </div>
 
         <div className="flex items-center justify-between">

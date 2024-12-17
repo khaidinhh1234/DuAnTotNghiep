@@ -43,7 +43,11 @@ const Subtotal = ({ tong_tien, Macode, trangthai, isPending }: any) => {
               className="lg:w-[218px] w-[300px] h-[56px] px-4 rounded-s-lg focus:outline-none border border-l-2 border-t-2 border-blackL border-r-0"
             /> */}
 
-            <Voucheruser onSelectVoucher={handleSelectVoucher} ap={ap} />
+            <Voucheruser
+              onSelectVoucher={handleSelectVoucher}
+              ap={ap}
+              trangthai={trangthai}
+            />
           </div>
           <div className="py-4">
             {selectedDiscount && (

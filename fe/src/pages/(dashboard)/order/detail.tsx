@@ -71,11 +71,13 @@ const Detail = ({ record }: any) => {
     },
   });
   const tong = data?.data;
-  const products = data?.data?.don_hang?.chi_tiets?.map((item: any) => {
-    return {
-      ...item,
-    };
-  }) || [];
+  const products =
+    data?.data?.don_hang?.chi_tiets?.map((item: any) => {
+      return {
+        ...item,
+      };
+    }) || [];
+  console.log("products", products);
   // const donhang = data?.data;
   const thongtin = data?.data.thong_tin;
   // console.log(tong, "thongtin");
@@ -221,7 +223,8 @@ const Detail = ({ record }: any) => {
               </div>
 
               <div
-                className={`font-bold text-[15px] ${record.trang_thai_don_hang === "Chờ xác nhận"
+                className={`font-bold text-[15px] ${
+                  record.trang_thai_don_hang === "Chờ xác nhận"
                     ? "text-yellow-400" // Chờ xác nhận: màu vàng nhạt
                     : record.trang_thai_don_hang === "Đã xác nhận"
                       ? "text-orange-500" // Đã xác nhận: màu cam đậm
@@ -230,27 +233,24 @@ const Detail = ({ record }: any) => {
                         : record.trang_thai_don_hang === "Đang giao hàng"
                           ? "text-purple-500" // Đang giao hàng: màu tím
                           : record.trang_thai_don_hang ===
-                            "Đơn hàng bị từ chối nhan"
+                              "Đơn hàng bị từ chối nhan"
                             ? "bg-red-500"
                             : record.trang_thai_don_hang ===
-                              "Chờ khách hàng xác nhận"
+                                "Chờ khách hàng xác nhận"
                               ? "text-green-700"
                               : record.trang_thai_don_hang ===
-
                                   "Hoàn tất đơn hàng"
                                 ? "text-green-500"
-
                                 : record.trang_thai_don_hang === "Hủy hàng"
                                   ? "bg-red-100"
                                   : record.trang_thai_don_hang === "Hoàn hàng"
                                     ? "bg-green-500"
-
                                     : "text-red-500"
                 }`}
-
               >
                 <div
-                  className={`${record.trang_thai_don_hang === "Chờ xác nhận"
+                  className={`${
+                    record.trang_thai_don_hang === "Chờ xác nhận"
                       ? "text-yellow-400" // Chờ xác nhận: màu vàng nhạt
                       : record.trang_thai_don_hang === "Đã xác nhận"
                         ? "text-orange-500" // Đã xác nhận: màu cam đậm
@@ -259,28 +259,26 @@ const Detail = ({ record }: any) => {
                           : record.trang_thai_don_hang === "Đang giao hàng"
                             ? "text-purple-500" // Đang giao hàng: màu tím
                             : record.trang_thai_don_hang ===
-                              "Chờ khách hàng xác nhận"
+                                "Chờ khách hàng xác nhận"
                               ? "text-green-700"
                               : record.trang_thai_don_hang ===
-                                "Hoàn tất đơn hàng"
+                                  "Hoàn tất đơn hàng"
                                 ? "text-green-500" // Hoàn tất đơn hàng: màu xanh lá
                                 : record.trang_thai_don_hang === "Hủy hàng"
                                   ? "text-red-500" // Hủy hàng: màu đỏ
                                   : record.trang_thai_don_hang ===
-                                    "Đơn hàng bị từ chối nhân"
+                                      "Đơn hàng bị từ chối nhân"
                                     ? "text-red-700" // Đơn hàng bị từ chối nhận: màu đỏ đậm
                                     : record.trang_thai_don_hang === "Hoàn hàng"
                                       ? "text-blue-700" // Hoàn hàng: màu xanh đậm
                                       : record.trang_thai_don_hang ===
-
                                           "Chờ xác nhận hoàn hàng"
                                         ? "text-yellow-500"
-
                                         : record.trang_thai_don_hang ===
-                                          "Từ chối hoàn hàng"
+                                            "Từ chối hoàn hàng"
                                           ? "text-gray-500" // Từ chối hoàn hàng: màu xám
                                           : "text-red-500" // Các trạng thái khác: màu đỏ
-                    }  px-2 py-1 font-bold rounded-lg`}
+                  }  px-2 py-1 font-bold rounded-lg`}
                 >
                   {record.trang_thai_don_hang === "Chờ xác nhận"
                     ? "Chờ xác nhận"
@@ -291,31 +289,31 @@ const Detail = ({ record }: any) => {
                         : record.trang_thai_don_hang === "Đang giao hàng"
                           ? "Đang giao hàng"
                           : record.trang_thai_don_hang ===
-                            "Chờ khách hàng xác nhận"
+                              "Chờ khách hàng xác nhận"
                             ? "Chờ khách hàng xác nhận"
                             : record.trang_thai_don_hang === "Hoàn tất đơn hàng"
                               ? "Hoàn tất đơn hàng"
                               : record.trang_thai_don_hang === "Hủy hàng"
                                 ? "Hủy hàng"
                                 : record.trang_thai_don_hang ===
-                                  "Đơn hàng bị từ chối nhân"
+                                    "Đơn hàng bị từ chối nhân"
                                   ? "Đơn hàng bị từ chối nhận"
                                   : record.trang_thai_don_hang === "Hoàn hàng"
                                     ? "Hoàn hàng"
                                     : record.trang_thai_don_hang ===
-                                      "Chờ xác nhận hoàn hàng"
+                                        "Chờ xác nhận hoàn hàng"
                                       ? "Chờ xác nhận hoàn hàng"
                                       : record.trang_thai_don_hang ===
-                                        "Từ chối hoàn hàng"
+                                          "Từ chối hoàn hàng"
                                         ? "Từ chối hoàn hàng"
                                         : record.trang_thai_don_hang ===
-                                          "Chờ xác nhận hủy hàng"
+                                            "Chờ xác nhận hủy hàng"
                                           ? "Chờ xác nhận hủy hàng"
                                           : record.trang_thai_don_hang ===
-                                            "Hủy hàng"
+                                              "Hủy hàng"
                                             ? "Hủy hàng"
                                             : record.trang_thai_don_hang ===
-                                              "Giao hàng thất bại"
+                                                "Giao hàng thất bại"
                                               ? "Giao hàng thất bại"
                                               : record.trang_thai_don_hang}
                 </div>
@@ -337,74 +335,84 @@ const Detail = ({ record }: any) => {
                   </thead>
                   <tbody>
                     {products && products.length > 0 ? (
-                      products.slice(0, visibleProducts).map((item: any, index: number) => (
-                        <tr key={index} className="my-5">
-                          <td>
-                            <div className="flex gap-5 items-center  w-[50%] my-2">
-                              <img
-                                src={
-                                  item?.bien_the_san_pham?.san_pham?.anh_san_pham
-                                }
-                                alt={""}
-                                className="w-20 h-20"
-                              />
-                              <div>
-                                <h1 className=" font-bold truncate w-40">
-                                  {
-                                    item?.bien_the_san_pham?.san_pham
-                                      ?.ten_san_pham
+                      products
+                        .slice(0, visibleProducts)
+                        .map((item: any, index: number) => (
+                          <tr key={index} className="my-5">
+                            <td>
+                              <div className="flex gap-5 items-center  w-[50%] my-2">
+                                <img
+                                  src={
+                                    item?.bien_the_san_pham?.anh_bien_the?.length > 0 
+                                    ? item?.bien_the_san_pham?.anh_bien_the[0]?.duong_dan_anh
+                                    : ''
                                   }
-                                </h1>
-                                <div className="flex gap-2">
-                                  <p className="text-base">
-                                    Màu :{" "}
-                                    <span>
-                                      {
-                                        item?.bien_the_san_pham?.mau_bien_the
-                                          ?.ten_mau_sac
-                                      }
+                                  alt={
+                                    item?.bien_the_san_pham?.san_pham
+                                      ?.anh_san_pham
+                                  }
+                                  className="w-20 h-20"
+                                />
+                                <div>
+                                  <h1 className=" font-bold truncate w-40">
+                                    {
+                                      item?.bien_the_san_pham?.san_pham
+                                        ?.ten_san_pham
+                                    }
+                                  </h1>
+                                  <div className=" ">
+                                    <span className="text-base p-0 m-0">
+                                      Màu :{" "}
+                                      <span>
+                                        {
+                                          item?.bien_the_san_pham?.mau_bien_the
+                                            ?.ten_mau_sac
+                                        }
+                                      </span>
                                     </span>
-                                  </p>
-                                  <p className="text-base flex">
-                                    Size :{" "}
-                                    <span>
-                                      {" "}
-                                      {
-                                        item?.bien_the_san_pham
-                                          ?.kich_thuoc_bien_the?.kich_thuoc
-                                      }
-                                      /
-                                      {
-                                        item?.bien_the_san_pham
-                                          ?.kich_thuoc_bien_the?.loai_kich_thuoc
-                                      }
-                                    </span>
-                                  </p>
+                                    <br />
+                                    <p className="text-base p-0 m-0">
+                                      Size :{" "}
+                                      <span>
+                                        {" "}
+                                        {
+                                          item?.bien_the_san_pham
+                                            ?.kich_thuoc_bien_the?.kich_thuoc
+                                        }{" "}
+                                        /
+                                        {
+                                          item?.bien_the_san_pham
+                                            ?.kich_thuoc_bien_the
+                                            ?.loai_kich_thuoc
+                                        }
+                                      </span>
+                                    </p>
+                                  </div>
                                 </div>
                               </div>
-                            </div>
-                          </td>
-                          <td className="text-center w-30 font-semibold  w-[20%]">
-                            {" "}
-                            {item?.so_luong}
-                          </td>
-                          <td className="text-center w-[20%] font-semibold  ">
-                            <span className="text-gray-400 line-through text-xs">
-                              {item?.bien_the_san_pham?.gia_ban?.toLocaleString() ??
-                                0}{" "}
-                            </span>{" "}
-                            {(
-                              item?.bien_the_san_pham?.gia_khuyen_mai_tam_thoi ??
-                              item?.bien_the_san_pham?.gia_khuyen_mai ??
-                              item?.bien_the_san_pham?.gia_ban
-                            )?.toLocaleString() ?? 0}
-                            VNĐ
-                          </td>
-                          <td className="text-center w-[35%] font-semibold">
-                            {item?.thanh_tien?.toLocaleString() ?? 0} VNĐ
-                          </td>
-                        </tr>
-                      ))
+                            </td>
+                            <td className="text-center w-30 font-semibold  w-[20%]">
+                              {" "}
+                              {item?.so_luong}
+                            </td>
+                            <td className="text-center w-[20%] font-semibold  ">
+                              <span className="text-gray-400 line-through text-xs">
+                                {item?.bien_the_san_pham?.gia_ban?.toLocaleString() ??
+                                  0}{" "}
+                              </span>{" "}
+                              {(
+                                item?.bien_the_san_pham
+                                  ?.gia_khuyen_mai_tam_thoi ??
+                                item?.bien_the_san_pham?.gia_khuyen_mai ??
+                                item?.bien_the_san_pham?.gia_ban
+                              )?.toLocaleString() ?? 0}
+                              VNĐ
+                            </td>
+                            <td className="text-center w-[35%] font-semibold">
+                              {item?.thanh_tien?.toLocaleString() ?? 0} VNĐ
+                            </td>
+                          </tr>
+                        ))
                     ) : (
                       <tr>
                         <td colSpan={4}>Không có sản phẩm</td>
@@ -412,10 +420,7 @@ const Detail = ({ record }: any) => {
                     )}
                     {visibleProducts < products.length && (
                       <div className="flex  ">
-                        <div
-                          onClick={handleLoadMore}
-                          className="font-bold"
-                        >
+                        <div onClick={handleLoadMore} className="font-bold">
                           <i className="fa-solid fa-share"></i> Xem thêm ...
                         </div>
                       </div>

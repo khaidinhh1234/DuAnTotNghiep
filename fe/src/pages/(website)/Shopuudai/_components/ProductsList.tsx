@@ -73,6 +73,7 @@ const ProductsList = ({ products, Wishlist, isPending, data, onPage }: any) => {
                     index={index}
                     prowish={product?.trang_thai_yeu_thich}
                     newProduct={product?.hang_moi}
+                    
                   />
                 </div>
               ))

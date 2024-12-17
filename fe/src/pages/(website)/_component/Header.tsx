@@ -548,7 +548,7 @@ const Header = () => {
                   {" "}
                   <Avatar className="relative" onClick={() => setcheck(!check)}>
                     <AvatarImage
-                      src={data?.data?.anh_nguoi_dung ?? anh_nguoi_dung}
+                      src={data?.data?.user?.anh_nguoi_dung ?? anh_nguoi_dung}
                       className="w-10 h-10 rounded-full border-2 border-gray-200 shadow-md object-cover"
                     />
 
@@ -567,8 +567,8 @@ const Header = () => {
                             className="text-black flex hover:bg-slate-300 px-2 pt-2 rounded-lg"
                           >
                             <img
-                              src={data?.data?.anh_nguoi_dung ?? anh_nguoi_dung}
-                              alt=""
+                      src={data?.data?.user?.anh_nguoi_dung ?? anh_nguoi_dung}
+                      alt=""
                               className="w-8 h-8 rounded-full border-2 border-gray-200 shadow-md object-cover"
                             />
                             <h6 className="font-semibold mx-2 text-lg ">

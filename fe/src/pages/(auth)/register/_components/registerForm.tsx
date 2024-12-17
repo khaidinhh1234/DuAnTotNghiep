@@ -32,6 +32,8 @@ const SignupForm = () => {
         // console.log(error);
         if (error.response.data == "Tài khoản đã tồn tại ") {
           toast.error("Tài khoản đã tồn tại");
+        } else if (error.response.data.error.email[0] == "email đã tồn tại.") {
+          toast.error("Email đã tồn tại");
         } else {
           toast.error("Đăng ký thất bại");
         }

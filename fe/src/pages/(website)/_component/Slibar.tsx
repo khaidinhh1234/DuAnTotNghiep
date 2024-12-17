@@ -38,7 +38,7 @@ const Slibar = () => {
       {/* Header Section */}
       <div className="flex items-center p-4 md:p-5 border-b border-hrBlack">
         <img
-          src={data?.data?.anh_nguoi_dung ?? anh_nguoi_dung}
+          src={data?.data?.user?.anh_nguoi_dung ?? anh_nguoi_dung}
           alt="Profile picture"
           className="rounded-full w-[40px] h-[40px] md:w-[50px] md:h-[50px] object-cover border border-gray-300 shadow-md"
         />
