@@ -24,7 +24,7 @@ class SendMail
         $this->condition = $condition;
         $this->email = $email;
         $this->name = $name;
-        $this-> noiDung = $noiDung;
+        $this->noiDung = $noiDung;
     }
 
     /**

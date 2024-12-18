@@ -66,7 +66,7 @@ const Chart5 = () => {
           <span className="text-red-600">↓ 89,09%</span>
         </div>
         <div className="col-span-1 text-end border-r px-5">
-          <h3 className="text-lg font-bold">Lợi nhuận (17.22%)</h3>
+          <h3 className="text-lg font-bold">Lợi nhuận </h3>
           <p className="text-base font-semibold text-green-600">
             {" "}
             <Statistic
