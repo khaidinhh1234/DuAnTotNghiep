@@ -74,6 +74,11 @@
             background-color: #e6c300;
             color: #fff;
         }
+        .noi-dung-phan-hoi {
+            font-size: 18px;
+            color: #ffffff;
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body>
@@ -83,7 +88,7 @@
         <p>Cảm ơn bạn đã liên hệ với chúng tôi! Chúng tôi đã nhận được phản hồi của bạn và sẽ phản hồi lại trong thời gian sớm nhất.</p>
 
         <p>Nội dung phản hồi của bạn:</p>
-        <blockquote>
+        <blockquote class="noi-dung-phan-hoi">
             {{ $noi_dung_phan_hoi }}
         </blockquote>
 

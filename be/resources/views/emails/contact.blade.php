@@ -120,6 +120,11 @@
             background-color: #e6c300;
             color: #fff;
         }
+        .noi-dung-lien-he {
+            font-size: 18px;
+            color: #ffffff;
+            margin-top: 20px;
+        }
     </style>
 </head>
 
@@ -139,7 +144,7 @@
                     thời gian sớm nhất.</p>
 
                 <p>Nội dung liên hệ của bạn:</p>
-                <blockquote>
+                <blockquote class="noi-dung-lien-he">
                     {{ $noidung }}
                 </blockquote>
 
