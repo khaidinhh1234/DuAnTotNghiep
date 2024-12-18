@@ -1,8 +1,9 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
 import { useState } from 'react';
-import { Pagination } from 'antd';
+import { Pagination, Spin } from 'antd';
 import instance from '@/configs/admin';
+import instanceClient from '@/configs/client';
 
 type NotificationType = keyof typeof NOTIFICATION_TYPES;
 
@@ -69,21 +70,14 @@ const NotificationPage1 = (): JSX.Element => {
 
   const markAllAsReadMutation = useMutation({
     mutationFn: async () => {
-      const unreadNotifications = notificationResponse?.data?.filter(
-        (notif: Notification) => notif.trang_thai_da_doc === "0" && 
-        (selectedType === NOTIFICATION_TYPES.ALL || notif.loai === selectedType)
-      ) || [];
-      
-      const promises = unreadNotifications.map((notification: Notification) => 
-        instance.post(`/thong-bao/da-doc/${notification.id}`)
-      );
-      
-      return Promise.all(promises);
+      const response = await instanceClient.post('/thong-bao/da-doc-tat-ca');
+      return response.data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['notifications'] });
     },
   });
+  
 
   const handleNotificationClick = (notification: Notification): void => {
     if (notification.trang_thai_da_doc === "0") {
@@ -91,8 +85,17 @@ const NotificationPage1 = (): JSX.Element => {
     }
   };
 
-  if (isLoading) return <div>Loading...</div>;
 
+  if (isLoading)
+    return (
+      <div>
+        <div className="flex items-center justify-center mt-[250px]">
+          <div className=" ">
+            <Spin size="large" />
+          </div>
+        </div>
+      </div>
+    );
   const notifications = notificationResponse?.data || [];
   const filteredNotifications = selectedType === NOTIFICATION_TYPES.ALL 
     ? notifications 

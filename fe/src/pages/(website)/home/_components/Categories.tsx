@@ -138,7 +138,7 @@ const Categories = ({ bo_suu_tap }: any) => {
                               alt={item.ten_san_pham}
                               className="absolute top-0 left-0 w-full h-full object-cover z-10 rounded-t-md"
                             />
-
+{/* 
                             {item.trong_chuong_trinh_uu_dai && (
                               <div
                                 className="absolute bottom-0 left-0 text-white px-4 py-2 rounded-tr-2xl text-sm font-bold z-20 flex items-center space-x-2"
@@ -152,7 +152,7 @@ const Categories = ({ bo_suu_tap }: any) => {
                                   <div>{item.trong_chuong_trinh_uu_dai}</div>
                                 </div>
                               </div>
-                            )}
+                            )} */}
                           </div>
                         </Link>
                         <View id={item?.duong_dan} ID={item?.id} />

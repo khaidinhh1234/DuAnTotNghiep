@@ -23,7 +23,7 @@ const AllProduct = () => {
       <section>
         <div className="container">
           <div className="flex mt-[70px] mb-9">
-            <p className="pr-2">Sản phẩm</p>
+            <p className="pr-2">Chương trình</p>
             --
             <p className="px-2">{currentPromotion?.ten_uu_dai || "Khuyến mãi"}</p>
           </div>
