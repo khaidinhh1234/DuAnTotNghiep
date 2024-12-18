@@ -4,12 +4,15 @@ namespace App\Http\Controllers\Admin\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\LichSuHoatDong;
+use Illuminate\Support\Facades\Auth;
 
 class LichSuHoatDongController extends Controller
 {
     public function index()
     {
-        $data = LichSuHoatDong::query()
+        $user = Auth::user();
+
+        $query = LichSuHoatDong::query()
             ->select(
                 'lich_su_hoat_dongs.id',
                 'lich_su_hoat_dongs.ten_bang',
@@ -28,15 +31,22 @@ class LichSuHoatDongController extends Controller
             ->join('users', 'lich_su_hoat_dongs.nguoi_thao_tac', '=', 'users.id')
             ->join('vai_tro_tai_khoan', 'users.id', '=', 'vai_tro_tai_khoan.user_id')
             ->join('vai_tros', 'vai_tro_tai_khoan.vai_tro_id', '=', 'vai_tros.id')
-            ->where('vai_tros.ten_vai_tro', '!=', 'Quản trị viên')
             ->where('vai_tros.ten_vai_tro', '!=', 'Khách hàng')
-            ->where('vai_tros.ten_vai_tro', '!=', 'Người giao hàng')
+            ->where('vai_tros.ten_vai_tro', '!=', 'Người giao hàng');
 
-            ->orderByDesc('lich_su_hoat_dongs.id')
-            ->get();
+        if ($user->vaiTros()->first()->ten_vai_tro == 'Quản trị viên') {
+            $data = $query->orderByDesc('lich_su_hoat_dongs.id')->get();
+        } elseif ($user->vaiTros()->first()->ten_vai_tro == 'Bán hàng') {
+            $data = $query->where('lich_su_hoat_dongs.nguoi_thao_tac', $user->id)
+                ->orderByDesc('lich_su_hoat_dongs.id')
+                ->get();
+        } else {
+            return response()->json(['message' => 'Không có quyền truy cập'], 403);
+        }
 
         return response()->json($data);
     }
+
 
 
 
