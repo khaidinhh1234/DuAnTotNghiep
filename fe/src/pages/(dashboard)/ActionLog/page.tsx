@@ -159,6 +159,7 @@ export function ActionLog() {
       title: "Mô tả chi tiết",
       dataIndex: "mo_ta",
       key: "mo_ta",
+      width: "30%",
     },
     {
       title: "Địa chỉ IP",
