@@ -149,7 +149,7 @@ class VanChuyenController extends Controller
                 } elseif ($validate['trang_thai_van_chuyen'] == VanChuyen::TTVC_GHTC) {
                     $tieuDeThongBao = 'Giao hàng thành công';
                     $noiDungThongBao = 'Đơn hàng #' . $vanChuyen->donHang->ma_don_hang . ' đã được giao thành công vào lúc ' . now()->format('H:i d/m/Y') . '.';
-                    $hinhAnhThongBao = 'https://e1.pngegg.com/pngimages/542/837/png-clipart-icone-de-commande.png';
+                    $hinhAnhThongBao = 'https://e1.pngegg.com/pngimages/542/837/png-clipart-icone-de-commande-bon-de-commande-bon-de-commande-bon-de-travail-systeme-de-gestion-des-commandes-achats-inventaire-conception-d-icones.png';
                     $vanChuyen->donHang->update([
                         'trang_thai_don_hang' => DonHang::TTDH_CKHCN
                     ]);
@@ -232,7 +232,7 @@ class VanChuyenController extends Controller
                             'noi_dung' => 'Đơn hàng ' . $vanChuyen->donHang->ma_don_hang . ' đã giao thất bại sau 3 lần thử.',
                             'loai' => 'Đơn hàng',
                             'duong_dan' => $vanChuyen->donHang->ma_don_hang,
-                            'hinh_thu_nho' => 'https://e1.pngegg.com/pngimages/542/837/png-clipart-icone-de-commande.png',
+                            'hinh_thu_nho' => 'https://e1.pngegg.com/pngimages/542/837/png-clipart-icone-de-commande-bon-de-commande-bon-de-commande-bon-de-travail-systeme-de-gestion-des-commandes-achats-inventaire-conception-d-icones.png',
                         ]);
                         broadcast(new ThongBaoMoi($thongBao))->toOthers();
 
@@ -251,7 +251,7 @@ class VanChuyenController extends Controller
                             'noi_dung' => 'Đơn hàng ' . $vanChuyen->donHang->ma_don_hang . ' giao thất bại lần ' . $vanChuyen->so_lan_giao . '. Ghi chú: ' . $ghiChuHienTai[$lanKey],
                             'loai' => 'Đơn hàng',
                             'duong_dan' => $vanChuyen->donHang->ma_don_hang,
-                            'hinh_thu_nho' => 'https://e1.pngegg.com/pngimages/542/837/png-clipart-icone-de-commande.png',
+                            'hinh_thu_nho' => 'https://e1.pngegg.com/pngimages/542/837/png-clipart-icone-de-commande-bon-de-commande-bon-de-commande-bon-de-travail-systeme-de-gestion-des-commandes-achats-inventaire-conception-d-icones.png',
                         ]);
                         broadcast(new ThongBaoMoi($thongBao))->toOthers();
 
@@ -278,7 +278,7 @@ class VanChuyenController extends Controller
                         'noi_dung' => 'Đơn hàng mã ' . $vanChuyen->donHang->ma_don_hang . ' đã giao hàng thành công.',
                         'loai' => 'Đơn hàng',
                         'duong_dan' => $vanChuyen->donHang->ma_don_hang,
-                        'hinh_thu_nho' => 'https://e1.pngegg.com/pngimages/542/837/png-clipart-icone-de-commande.png',
+                        'hinh_thu_nho' => 'https://e1.pngegg.com/pngimages/542/837/png-clipart-icone-de-commande-bon-de-commande-bon-de-commande-bon-de-travail-systeme-de-gestion-des-commandes-achats-inventaire-conception-d-icones.png',
                     ]);
                     broadcast(new ThongBaoMoi($thongBao))->toOthers();
 
