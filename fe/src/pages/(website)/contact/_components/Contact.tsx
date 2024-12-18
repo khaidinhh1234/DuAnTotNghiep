@@ -19,14 +19,14 @@ const ContactPage = () => {
   } = useForm<lienhetype>({
     resolver: zodResolver(lienhe),
   });
-  const { data: websiteInfo } = useQuery({
-    queryKey: ["websiteInfo"],
-    queryFn: async () => {
-      const response = await instanceClient.get("/thong-tin-web");
-      console.log("Raw API Response:", response.data);
-      return response.data.data;
-    },
-  });
+  // const { data: websiteInfo } = useQuery({
+  //   queryKey: ["websiteInfo"],
+  //   queryFn: async () => {
+  //     const response = await instanceClient.get("/thong-tin-web");
+  //     console.log("Raw API Response:", response.data);
+  //     return response.data.data;
+  //   },
+  // });
   interface WebsiteInfo {
     so_dien_thoai_khieu_nai?: string;
     email?: string;

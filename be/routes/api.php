@@ -341,12 +341,13 @@ Route::middleware(['auth.sanctum'])
         // Tài khoản
         Route::middleware('auth.checkrole')
             ->group(function () {
-                Route::apiResource('taikhoan', TaiKhoanController::class)->except(['show']);
+                Route::apiResource('taikhoan', TaiKhoanController::class)->except(['show', 'destroy']);
                 Route::get('taikhoan/roles', [TaiKhoanController::class, 'danhSachVaiTro'])->withoutMiddleware('auth.checkrole');
                 Route::get('taikhoan/thung-rac', [TaiKhoanController::class, 'danhSachTaiKhoanDaXoa'])->name('taikhoan.thungrac');
                 Route::post('taikhoan/thung-rac/{id}', [TaiKhoanController::class, 'khoiPhucTaiKhoan'])->name('taikhoan.khoiphuc');
                 Route::get('taikhoan/{id}', [TaiKhoanController::class, 'show'])->withoutMiddleware('auth.checkrole');
                 Route::post('taikhoan/cap-nhat-mat-khau', [TaiKhoanController::class, 'doiMatKhau'])->withoutMiddleware('auth.checkrole');
+                Route::post('taikhoan/{id}', [TaiKhoanController::class, 'destroy'])->name('taikhoan.destroy');
             });
 
         //Hạng thành viên

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin\Api;
 
+use App\Events\SendMail;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreTaiKhoanRequest;
 use App\Http\Requests\UpdateTaiKhoanRequest;
@@ -228,11 +229,18 @@ class TaiKhoanController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Request $request, string $id)
     {
+        // dd($request->all());
         try {
+            $validated = $request->validate([
+                'ly_do_block' => 'required'
+            ]);
             DB::beginTransaction();
             $taiKhoan = User::query()->findOrFail($id);
+            $taiKhoan->update([
+                'ly_do_block' => $validated['ly_do_block']
+            ]);
             $vaiTro = $taiKhoan->vaiTros;
             if ($vaiTro->contains('ten_vai_tro', 'Quản trị viên')) {
                 return response()->json([
@@ -242,6 +250,7 @@ class TaiKhoanController extends Controller
                 ], 400);
             } else {
                 $taiKhoan->delete();
+                event(new SendMail($taiKhoan->email, $taiKhoan->ho . ' ' . $taiKhoan->ten, 'blockTaiKhoan'));
             }
 
             DB::commit();

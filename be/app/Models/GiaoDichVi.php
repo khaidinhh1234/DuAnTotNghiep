@@ -25,6 +25,10 @@ class GiaoDichVi extends Model
         return $this->belongsTo(ViTien::class, 'vi_tien_id', 'id');
     }
 
+    public function hoanTien(){
+        return $this->hasOne(HoanTien::class, 'giao_dich_id', 'id');
+    }
+
     protected static function boot()
     {
         parent::boot();
