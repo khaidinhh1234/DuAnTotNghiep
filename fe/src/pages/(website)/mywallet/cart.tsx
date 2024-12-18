@@ -90,7 +90,7 @@ function CreditCardForm({ bankData }: { bankData: BankData }) {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["linkedBanks"] });
-      toast.success("Thêm ngân hàng thành công");
+      toast.success("liên kết ngân hàng thành công");
       setCardNumber("");
       setCardHolder("");
     },

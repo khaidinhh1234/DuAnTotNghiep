@@ -250,12 +250,30 @@ const ShowNhanvien = () => {
                                     "Đang giao hàng"
                                   ? "text-purple-500"
                                   : don_hang?.trang_thai_don_hang ===
-                                      "Đã giao hàng thành công"
-                                    ? "text-green-500"
+                                      "Chờ khách hàng xác nhận"
+                                    ? "text-indigo-500"
                                     : don_hang?.trang_thai_don_hang ===
-                                        "Hủy hàng"
-                                      ? "text-red-500"
-                                      : ""
+                                        "Hoàn tất đơn hàng"
+                                      ? "text-green-500"
+                                      : don_hang?.trang_thai_don_hang ===
+                                          "Đơn hàng bị từ chối nhân"
+                                        ? "text-red-500"
+                                        : don_hang?.trang_thai_don_hang ===
+                                            "Hủy hàng"
+                                          ? "text-red-700"
+                                          : don_hang?.trang_thai_don_hang ===
+                                              "Hoàn hàng"
+                                            ? "text-pink-500"
+                                            : don_hang?.trang_thai_don_hang ===
+                                                "Chờ xác nhận hoàn hàng"
+                                              ? "text-yellow-400"
+                                              : don_hang?.trang_thai_don_hang ===
+                                                  "Từ chối hoàn hàng"
+                                                ? "text-red-400"
+                                                : don_hang?.trang_thai_don_hang ===
+                                                    "Chờ xác nhận hủy hàng"
+                                                  ? "text-gray-500"
+                                                  : ""
                         }`}
                       >
                         {don_hang?.trang_thai_don_hang}

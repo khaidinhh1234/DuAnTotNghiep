@@ -65,9 +65,15 @@ const NapTien: React.FC = () => {
   };
 
   const handleAmountChange = (e: any) => {
-    const value = e.target.value.replace(/\D/g, ""); // Loại bỏ các ký tự không phải số
-    setAmount(value);
-  };
+    const inputValue = e.target.value.replace(/[^0-9]/g, ""); 
+    const maxAmount = 100000000000; 
+  
+    if (Number(inputValue) <= maxAmount) {
+      setAmount(inputValue);
+    } else {
+      setAmount(maxAmount.toString()); 
+    }
+  }
   const [isFocused, setIsFocused] = useState(false);
   const handleBlur = () => {
     setIsFocused(false); // Mất tiêu điểm

@@ -41,7 +41,7 @@ const WithdrawPage = () => {
     onSuccess: () => {
       setAmount(0);
       setUseFullBalance(false);
-      toast.success('Rút tiền thành công');
+      toast.success('Yêu cầu rút tiền thành công');
       navigate("/mypro/wallet");
       queryClient.invalidateQueries({ queryKey: ['walletData'] });
     },

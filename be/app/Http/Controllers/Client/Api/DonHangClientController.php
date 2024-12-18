@@ -933,7 +933,7 @@ class DonHangClientController extends Controller
                 'user_id' => $userId,
                 'tieu_de' => 'Yêu cầu rút tiền',
                 'noi_dung' => 'Yêu cầu rút tiền của bạn đã được gửi.',
-                'loai' => 'Rút tiền',
+                'loai' => 'Ví tiền',
                 'duong_dan' => $yeuCauRutTien->id,
                 'hinh_thu_nho' => 'https://e1.pngegg.com/pngimages/542/837/png-clipart-icone-de-commande-bon-de-commande-bon-de-commande-bon-de-travail-systeme-de-gestion-des-commandes-achats-inventaire-conception-d-icones.png',
             ]);
@@ -950,7 +950,7 @@ class DonHangClientController extends Controller
                     'user_id' => $userRutTiens->id,
                     'tieu_de' => 'Yêu cầu rút tiền',
                     'noi_dung' => 'Có 1 yêu cầu rút tiền mới của người dùng: ' . $user->ho . ' ' . $user->ten . '.',
-                    'loai' => 'Rút tiền',
+                    'loai' => 'Ví tiền',
                     'duong_dan' => $yeuCauRutTien->id,
                     'hinh_thu_nho' => 'https://e1.pngegg.com/pngimages/542/837/png-clipart-icone-de-commande-bon-de-commande-bon-de-commande-bon-de-travail-systeme-de-gestion-des-commandes-achats-inventaire-conception-d-icones.png',
                 ]);
@@ -967,7 +967,7 @@ class DonHangClientController extends Controller
                 'user_id' => $userAdmin->id,
                 'tieu_de' => 'Yêu cầu rút tiền',
                 'noi_dung' => 'Có 1 yêu cầu rút tiền, nhân viên đang xử lý: ' . $userRutTiens->ho . ' ' . $userRutTiens->ten . '.',
-                'loai' => 'Rút tiền',
+                'loai' => 'Ví tiền',
                 'duong_dan' => $yeuCauRutTien->id,
                 'hinh_thu_nho' => 'https://e1.pngegg.com/pngimages/542/837/png-clipart-icone-de-commande-bon-de-commande-bon-de-commande-bon-de-travail-systeme-de-gestion-des-commandes-achats-inventaire-conception-d-icones.png',
             ]);
