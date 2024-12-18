@@ -367,16 +367,16 @@ const ProductItem = ({
         <div className=" md:col-span-5  col-span-7">
           <div className="flex justify-between ">
             <div className="grid justify-between">
-              <div className="flex gap-5 items-start  md:items-center">
+              <div className="flex gap-5 items-start  ">
                 <div className=" rounded-md text-center">
                   {" "}
                   <img
                     src={img ?? sanPham2}
                     alt={img ?? sanPham2}
-                    className="w-36 h-30 lg:w-20 lg:h-24 rounded-md mb-5"
+                    className="w-40 h-30 lg:w-32 lg:h-30 rounded-md mb-5 mx-auto"
                   />
                   <span
-                    className={`text-xs px-2 py-1 rounded-sm ${
+                    className={`text-xs px-1 w-36 py-1 rounded-sm ${
                       status == "Chờ xác nhận"
                         ? "inprocrass"
                         : status == "Đã xác nhận"
@@ -389,9 +389,12 @@ const ProductItem = ({
                                 ? "bg-yellow-100 text-yellow-500 rounded-md"
                                 : status == "Hoàn tất đơn hàng"
                                   ? "delivered"
-                                  : status == "Đơn hàng bị từ chối nhân"
-                                    ? "bg-red-100 text-red-500 rounded-md"
-                                    : "bg-red-100 text-red-500 rounded-md"
+                                  : status == "Chờ xác nhận hoàn hàng" ||
+                                      status == "Chờ xác nhận hủy hàng"
+                                    ? "bg-red-100 text-red-500 rounded-md flex "
+                                    : status == "Đơn hàng bị từ chối nhân"
+                                      ? "bg-red-100 text-red-500 rounded-md"
+                                      : "bg-red-100 text-red-500 rounded-md "
                     }`}
                   >
                     {status === "Đang xử lý"
@@ -404,7 +407,7 @@ const ProductItem = ({
                   </span>
                 </div>
                 <div className="px-1">
-                  <h3 className="font-bold my-1">{name}</h3>
+                  <h3 className="font-bold my-1 w-64">{name}</h3>
                   <p className={`font-bold  block md:hidden`}>
                     {" "}
                     <p>
@@ -437,7 +440,7 @@ const ProductItem = ({
               </div>{" "}
             </div>
             <div
-              className={`text-center py-8 font-bold md:block  hidden text-lg`}
+              className={`text-center py-8 font-bold md:block  hidden text-lg w-[200px]`}
             >
               <p>
                 {" "}
