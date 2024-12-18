@@ -32,7 +32,7 @@ class ThongBaoTelegramController extends Controller
         $message .= "Trạng thái: {$vanChuyen->trang_thai_van_chuyen}\n";
         $message .= "COD: {$vanChuyen->tien_cod} VND\n";
         $message .= "Khách hàng: {$donHang->ten_nguoi_dat_hang}\n";
-        $message .= "Đường dẫn: " . "http://10.24.34.139:5173/shipper2" . "\n";
+        // $message .= "Đường dẫn: " . "http://10.24.34.48:5173/shipper2" . "\n";
         $message .= "Ghi chú: {$vanChuyen->ghi_chu}\n";
 
         // Lấy danh sách các shipper có số điện thoại và `chat_id`
@@ -59,7 +59,7 @@ class ThongBaoTelegramController extends Controller
         $message = "✅ Đơn hàng {$donHang->ma_don_hang} đã hoàn tất thành công!\n";
         $message .= "Khách hàng: {$donHang->ten_nguoi_dat_hang}\n";
         $message .= "Tổng tiền: {$donHang->tong_tien_don_hang} VND\n";
-        $message .= "Đường dẫn: " . "http://192.168.250.174:5173/shipper" . "\n";
+        // $message .= "Đường dẫn: " . "http://10.24.34.48:5173/shipper2" . "\n";
 
         $shipper = User::findOrFail($vanChuyen->shipper_id);
         $this->sendTelegramMessage($shipper->telegram_chat_id, $message);
@@ -79,7 +79,7 @@ class ThongBaoTelegramController extends Controller
         $message = "🔄 Đơn hàng {$donHang->ma_don_hang} đang được hoàn hàng!\n";
         $message .= "Khách hàng: {$donHang->ten_nguoi_dat_hang}\n";
         $message .= "Tổng tiền hoàn: {$donHang->tong_tien_don_hang} VND\n";
-        $message .= "Đường dẫn: http://192.168.250.174:5173/shipper\n";
+        // $message .= "Đường dẫn: " . "http://10.24.34.48:5173/shipper2" . "\n";
 
         $this->sendTelegramMessage($shipper->telegram_chat_id, $message);
 

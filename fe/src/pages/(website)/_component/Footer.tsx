@@ -341,12 +341,19 @@ const Footer = () => {
           </div>
 
           <div className="flex justify-betweend py-2">
-          <div className="flex items-center space-x-2">
-  <img src="/mony.png" alt="" className="h-10 w-20 object-contain" />
-  <img src="/Momo1.png" alt="" className="h-10 w-20 -left-9 object-contain  rounded-[8px]" />
-  {/* <img src="/vi.png" alt="" className="h-10 w-12 object-contain rounded-[8px]" /> */}
-
-</div>
+            <div className="flex items-center space-x-2">
+              <img
+                src="/mony.png"
+                alt=""
+                className="h-10 w-20 object-contain"
+              />
+              <img
+                src="/Momo1.png"
+                alt=""
+                className="h-10 w-20 -left-9 object-contain  rounded-[8px]"
+              />
+              {/* <img src="/vi.png" alt="" className="h-10 w-12 object-contain rounded-[8px]" /> */}
+            </div>
 
             <div className="text-center mx-auto py-3">
               © 2024 Glow Clothing.
@@ -380,7 +387,7 @@ const Footer = () => {
                 />
               </a>
               <a
-                href={websiteInfo?.link_youtube}
+                href={websiteInfo?.link_tiktok}
                 target="_blank"
                 rel="noopener noreferrer"
               >

@@ -26,8 +26,10 @@ class User extends Authenticatable
     const TYPE_KHAC = 3;
     protected $fillable = [
         'ho',
+        'hang_thanh_vien_id',
         'ten',
         'anh_nguoi_dung',
+        'telegram_chat_id',
         'email',
         'password',
         'so_dien_thoai',
@@ -35,7 +37,8 @@ class User extends Authenticatable
         'ngay_sinh',
         'gioi_tinh',
         'hang_thanh_vien_id',
-        'an_danh'
+        'an_danh',
+        'ly_do_block',
     ];
 
     /**
