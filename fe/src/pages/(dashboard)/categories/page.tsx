@@ -93,14 +93,14 @@ const CategoriesAdmin: React.FC = () => {
         content: "Xóa danh mục thành công",
       });
     },
-    onError: (error) => {
-      console.error("Error deleting category:", error);
-
-      message.open({
-        type: "error",
-        content: "Xóa danh mục thất bại",
-      });
-    },
+    onError: (error: any) => {
+      if (error.response && error.response.data) {
+        const errorMessage = error.response.data.error || "Có lỗi xảy ra!";
+        message.error(errorMessage);
+      } else {
+        message.error("Đã có lỗi xảy ra khi thêm danh mục.");
+      }
+    }, 
   });
 
   const handleSearch = (
