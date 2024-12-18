@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreTaiKhoanRequest;
 use App\Http\Requests\UpdateTaiKhoanRequest;
+use App\Models\DanhGia;
 use App\Models\DonHang;
 use App\Models\HangThanhVien;
 use App\Models\User;
@@ -133,18 +134,18 @@ class TaiKhoanController extends Controller
             $taiKhoan = User::query()->with('vaiTros', 'hangThanhVien', 'danhGias', 'donHangs', 'sanPhamYeuThich')->findOrFail($id);
             $tongTienDonhangThanhCong = $taiKhoan->donHangs()->where('trang_thai_don_hang', DonHang::TTDH_HTDH)->where('trang_thai_thanh_toan', 'Đã thanh toán')->sum('tong_tien_don_hang');
             $tongDonHoan = $taiKhoan->donHangs()->where('trang_thai_don_hang', DonHang::TTDH_HH)->count();
-            // $quyen = $taiKhoan->vaiTros->flatMap(function ($vaiTro) {
-            //     return $vaiTro->quyens->pluck('ten_quyen');
-            // })->unique()->values()->all();
+            $tongDonHang = $taiKhoan->donHangs()->where('trang_thai_don_hang', DonHang::TTDH_HTDH)->count();
+            $danhGia = DanhGia::query()->where('user_id', $id)->count();
+            $tongSanPhamYeuThich = $taiKhoan->sanPhamYeuThich()->count();
 
             $data = [
                 'tai_khoan' => $taiKhoan,
                 // 'quyen' => $quyen,
                 'tong_tien_don_hang' => (int)$tongTienDonhangThanhCong,
                 'tong_don_hoan' => $tongDonHoan,
-                'so_luong_danh_gia' => count($taiKhoan->danhGias),
-                'so_luong_don_hang' => count($taiKhoan->donHangs),
-                'so_luong_yeu_thich' => count($taiKhoan->sanPhamYeuThich)
+                'so_luong_danh_gia' => $danhGia,
+                'so_luong_don_hang' => $tongDonHang,
+                'so_luong_yeu_thich' => $tongSanPhamYeuThich
             ];
             return response()->json([
                 'status' => true,
