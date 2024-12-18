@@ -56,10 +56,7 @@ const MainHeader = () => {
           Giao Hàng Glow Express
         </h1>
       </div>
-      {/* <div className="hover:text-red-500 cursor-pointer" onClick={logout}>
-        <span>Thoát</span>
-        <i className="fa-solid fa-arrow-right-from-bracket ml-1 mr-5 "></i>
-      </div> */}
+     
       {/* Thông tin giao hàng */}
       <div className="lg:ml-auto text-left lg:text-right">
         <h1 className="font-semibold text-lg lg:text-2xl">
@@ -73,12 +70,7 @@ const MainHeader = () => {
           Người giao hàng: {member?.ho + " " + member?.ten}
         </h1>
         <h1 className="font-semibold text-md lg:text-xl">ID: {member?.telegram_chat_id}</h1>
-        {/* <h1 className="font-semibold text-md lg:text-xl">
-          Địa chỉ: {member?.dia_chi}
-        </h1>
-        <h1 className="font-semibold text-md lg:text-xl">
-          Địa chỉ: {member?.so_dien_thoai}
-        </h1> */}
+        
       </div>
     </div>
   );
