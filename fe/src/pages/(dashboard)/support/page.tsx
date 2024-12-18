@@ -222,11 +222,11 @@ const PageSupport: React.FC = () => {
     },
     {
       title: "Họ tên",
-      dataIndex: "user_id",
-      key: "user_id",
+      dataIndex: "name",
+      key: "name",
       width: "15%",
-      ...getColumnSearchProps("user_id"),
-      sorter: (a: any, b: any) => a.user_id.localeCompare(b.user_id),
+      ...getColumnSearchProps("name"),
+      sorter: (a: any, b: any) => a.name.localeCompare(b.name),
       render: (text) => (text ? text : "Chưa có dữ liệu"),
     },
     {
@@ -379,7 +379,7 @@ const PageSupport: React.FC = () => {
                 width={150}
               />
               <p className="mt-2 text-center font-bold">
-                {`${currentEvaluate.user.ho} ${currentEvaluate.user.ten}`}
+                {`${currentEvaluate.name}`}
               </p>
             </div>
 
@@ -396,7 +396,7 @@ const PageSupport: React.FC = () => {
                 <div>
                   <strong>Số điện thoại</strong>:{" "}
                   <a href={`tel:${currentEvaluate.sdt_lien_he}`}>
-                    {currentEvaluate.sdt_lien_he}
+                    {currentEvaluate.sdt_lien_he || "Chưa có dữ liệu"}
                   </a>
                 </div>{" "}
                 {/* spell-checker: disable-line */}
