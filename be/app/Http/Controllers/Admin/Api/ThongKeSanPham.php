@@ -17,7 +17,7 @@ class ThongKeSanPham extends Controller
 {
     public function thongKeTopSanPham(Request $request)
     {
-        // Lấy ngày bắt đầu và ngày kết thúc từ request, mặc định là 10 ngày gần nhất nếu không có input
+        // Lấy ngày bắt đầu và ngày kết thúc từ request
         $ngayBatDau = $request->has('ngay_bat_dau')
             ? Carbon::parse($request->input('ngay_bat_dau'))->setTimezone('Asia/Ho_Chi_Minh')->startOfDay()
             : now()->subDays(10)->setTimezone('Asia/Ho_Chi_Minh')->startOfDay();
@@ -25,6 +25,7 @@ class ThongKeSanPham extends Controller
         $ngayKetThuc = $request->has('ngay_ket_thuc')
             ? Carbon::parse($request->input('ngay_ket_thuc'))->setTimezone('Asia/Ho_Chi_Minh')->endOfDay()
             : now()->setTimezone('Asia/Ho_Chi_Minh')->endOfDay();
+
         $soLuongTop = $request->input('top', 5);
 
         // Tạo danh sách các ngày trong khoảng thời gian được chọn
@@ -33,45 +34,36 @@ class ThongKeSanPham extends Controller
             $dates[] = $date->format('Y-m-d');
         }
 
-        // Truy vấn chi tiết đơn hàng theo khoảng thời gian và trạng thái "TTDH_HTDH"
-        $topSanPhams = DonHangChiTiet::select('bien_the_san_phams.san_pham_id', DB::raw('SUM(so_luong) as tong_so_luong'))
-            ->join('bien_the_san_phams', 'don_hang_chi_tiets.bien_the_san_pham_id', '=', 'bien_the_san_phams.id')
-            ->whereHas('donHang', function ($query) use ($ngayBatDau, $ngayKetThuc) {
-                $query->whereBetween('ngay_hoan_thanh_don', [$ngayBatDau, $ngayKetThuc]) // Lọc theo ngày hoàn thành đơn
-                    ->where('trang_thai_don_hang', DonHang::TTDH_HTDH); // Lọc theo trạng thái "TTDH_HTDH"
-            })
-            ->groupBy('bien_the_san_phams.san_pham_id')
+        // Truy vấn top sản phẩm theo số lượng bán ra từ bảng SanPham
+        $topSanPhams = SanPham::select('san_phams.id', 'san_phams.ten_san_pham', DB::raw('SUM(don_hang_chi_tiets.so_luong) as tong_so_luong'))
+            ->join('bien_the_san_phams', 'san_phams.id', '=', 'bien_the_san_phams.san_pham_id')
+            ->join('don_hang_chi_tiets', 'bien_the_san_phams.id', '=', 'don_hang_chi_tiets.bien_the_san_pham_id')
+            ->join('don_hangs', 'don_hang_chi_tiets.don_hang_id', '=', 'don_hangs.id')
+            ->whereBetween('don_hangs.ngay_hoan_thanh_don', [$ngayBatDau, $ngayKetThuc])
+            ->where('don_hangs.trang_thai_don_hang', DonHang::TTDH_HTDH)
+            ->groupBy('san_phams.id', 'san_phams.ten_san_pham')
             ->orderBy('tong_so_luong', 'desc')
             ->limit($soLuongTop)
             ->get();
 
         $result = [];
 
-        // Xử lý mỗi sản phẩm trong danh sách top
-        foreach ($topSanPhams as $sanPhamChiTiet) {
-            // Lấy thông tin tên sản phẩm qua quan hệ bienTheSanPham -> sanPham
-            $sanPham = SanPham::find($sanPhamChiTiet->san_pham_id);
-            $tenSanPham = $sanPham->ten_san_pham ?? 'Sản phẩm không tồn tại';
-
+        // Xử lý dữ liệu cho mỗi sản phẩm trong danh sách top
+        foreach ($topSanPhams as $sanPham) {
             $soLuongTheoNgay = [];
             foreach ($dates as $date) {
-                // Truy vấn số lượng theo ngày hoàn thành đơn hàng qua quan hệ với DonHang
-                $soLuongTrongNgay = DonHangChiTiet::whereHas('bienTheSanPham', function ($query) use ($sanPhamChiTiet) {
-                    $query->where('san_pham_id', $sanPhamChiTiet->san_pham_id);
-                })
-                    ->whereHas('donHang', function ($query) use ($date) {
-                        $query->whereDate('ngay_hoan_thanh_don', $date) // Lọc theo ngày hoàn thành đơn
-                            ->where('trang_thai_don_hang', DonHang::TTDH_HTDH); // Lọc theo trạng thái "TTDH_HTDH"
-                    })
-                    ->sum('so_luong');
+                $soLuongTrongNgay = DonHangChiTiet::join('bien_the_san_phams', 'don_hang_chi_tiets.bien_the_san_pham_id', '=', 'bien_the_san_phams.id')
+                    ->join('don_hangs', 'don_hang_chi_tiets.don_hang_id', '=', 'don_hangs.id')
+                    ->where('bien_the_san_phams.san_pham_id', $sanPham->id)
+                    ->whereDate('don_hangs.ngay_hoan_thanh_don', $date)
+                    ->where('don_hangs.trang_thai_don_hang', DonHang::TTDH_HTDH)
+                    ->sum('don_hang_chi_tiets.so_luong');
 
-                // Đảm bảo số lượng là một số (trả về 0 nếu không có dữ liệu)
                 $soLuongTheoNgay[] = (int) $soLuongTrongNgay;
             }
 
-            // Thêm sản phẩm và số liệu thống kê vào kết quả
             $result[] = [
-                'name' => $tenSanPham,
+                'name' => $sanPham->ten_san_pham,
                 'data' => $soLuongTheoNgay,
             ];
         }

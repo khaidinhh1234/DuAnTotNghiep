@@ -209,7 +209,7 @@ const Chart6 = ({ datestart, dateend, don_hang_chot }: ChartProps) => {
           </div>
         </div>
         <div className="col-span-1 text-end border-r px-5">
-          <h3 className="text-lg font-bold">Lợi nhuận (17.22%)</h3>
+          <h3 className="text-lg font-bold">Lợi nhuận</h3>
           <p className="text-base font-semibold text-green-600">
             {" "}
             <Statistic

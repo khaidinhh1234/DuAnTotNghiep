@@ -35,7 +35,9 @@ const SanPham = () => {
   const handleChange = (value: any) => {
     setTop(value);
   };
-
+  const disabledDate = (current: any | null) => {
+    return current && current.isAfter(dayjs().endOf("day"));
+  };
   return (
     <>
       <div className="p-6 bg-gray-100 min-h-screen">
@@ -46,6 +48,7 @@ const SanPham = () => {
               onChange={handleDateChange}
               value={[datestart, dateend]} // Hiển thị giá trị ngày từ state
               defaultValue={[dayjs().subtract(10, "day"), dayjs()]} // Giá trị mặc định từ 10 ngày trước đến hôm nay
+              disabledDate={disabledDate}
             />
 
             <Select

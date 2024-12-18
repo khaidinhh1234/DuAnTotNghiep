@@ -113,7 +113,7 @@ const RefundDetail: React.FC<RefundDetailProps> = ({ record }) => {
               <Descriptions.Item label="Mã giao dịch ví" span={2}>
                 {record.giao_dich_vi.ma_giao_dich}
               </Descriptions.Item>
-              <Descriptions.Item label="Trạng thái giao dịch">
+              {/* <Descriptions.Item label="Trạng thái giao dịch">
                 <Tag
                   color={
                     record.giao_dich_vi.trang_thai === "thanh_cong"
@@ -125,7 +125,7 @@ const RefundDetail: React.FC<RefundDetailProps> = ({ record }) => {
                     ? "Thành công"
                     : "Đang xử lý"}
                 </Tag>
-              </Descriptions.Item>
+              </Descriptions.Item> */}
             </>
           )}
         </Descriptions>
