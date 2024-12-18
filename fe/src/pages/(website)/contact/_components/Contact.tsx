@@ -1,14 +1,12 @@
+import { lienhetype } from "@/common/types/product";
+import { lienhe } from "@/common/validations/auth";
+import { useLocalStorage } from "@/components/hook/useStoratge";
 import instanceClient from "@/configs/client";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
-import { lienhe } from "@/common/validations/auth";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { lienhetype } from "@/common/types/product";
-import { useEffect, useState } from "react";
-import { useLocalStorage } from "@/components/hook/useStoratge";
-import { Modal } from "antd";
-import LoginPopup from "@/pages/(auth)/loginpopup/LoginPopup";
 
 const ContactPage = () => {
   const [user] = useLocalStorage("user" as any, {});
@@ -63,15 +61,15 @@ const ContactPage = () => {
   const onSubmit = (data: any) => {
     mutate(data);
   };
-  const access_token =
-    user.access_token || localStorage.getItem("access_token");
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  const handleCart = (e: React.MouseEvent) => {
-    if (!access_token) {
-      e.preventDefault(); // Ngăn chuyển hướng
-      setIsModalVisible(true); // Hiển thị Modal
-    }
-  };
+  // const access_token =
+  //   user.access_token || localStorage.getItem("access_token");
+  // const [isModalVisible, setIsModalVisible] = useState(false);
+  // const handleCart = (e: React.MouseEvent) => {
+  //   if (!access_token) {
+  //     e.preventDefault(); // Ngăn chuyển hướng
+  //     setIsModalVisible(true); // Hiển thị Modal
+  //   }
+  // };
   return (
     <>
       <main className="py-10 mt-10">
@@ -197,7 +195,7 @@ const ContactPage = () => {
                 </div>
 
                 <button
-                  onClick={handleCart}
+                  // onClick={handleCart}
                   type="submit"
                   className={`btn-black w-full md:w-auto lg:text-lg py-2 px-7 font-medium rounded-lg ${
                     isPending
@@ -210,14 +208,14 @@ const ContactPage = () => {
                   </span>
                 </button>
 
-                <Modal
+                {/* <Modal
                   visible={isModalVisible}
                   onCancel={() => setIsModalVisible(false)}
                   footer={null}
                   width={500}
                 >
                   <LoginPopup />
-                </Modal>
+                </Modal> */}
               </form>
             </div>
           </div>

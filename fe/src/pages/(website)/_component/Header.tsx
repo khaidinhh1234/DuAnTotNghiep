@@ -499,8 +499,8 @@ const Header = () => {
                 <i className="fa-regular fa-bell text-xl relative cursor-pointer px-1">
                   {unreadCount > 0 && (
                     <span className="absolute -bottom-1 left-[10px] w-4 h-4 text-[10px] bg-red-500 rounded-full text-white flex items-center justify-center">
-                      {unreadCount}
-                    </span>
+        {unreadCount > 99 ? '99+' : unreadCount}
+        </span>
                   )}
                 </i>
 
