@@ -331,11 +331,14 @@ class TrangChiTietSpController extends Controller
         }
 
         $danhMuc = $sanPham->danhMuc;
-        if ($danhMuc->cha_id !== null) {
+
+        while ($danhMuc && $danhMuc->cha_id !== null) {
             $danhMuc = DanhMuc::find($danhMuc->cha_id);
         }
 
+
         $tenDanhMuc = strtolower($danhMuc->ten_danh_muc);
+
         $gioiTinh = $danhMuc->gioi_tinh;
 
         $kichThuoc = BienTheKichThuoc::where('loai_kich_thuoc', $tenDanhMuc)
