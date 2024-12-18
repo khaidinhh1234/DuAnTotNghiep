@@ -121,8 +121,8 @@ class DonHangController extends Controller
             if ($donHang->ma_giam_gia) {
 
                 $soTienGiamGia = $maGiamGia->loai === 'phan_tram'
-                    ? ($donHang->tong_tien_don_hang * $maGiamGia->giam_gia / 100)
-                    : $maGiamGia->giam_gia;
+                    ? $maGiamGia->giam_toi_da
+                    : ($donHang->tong_tien_don_hang * $maGiamGia->giam_gia / 100);
 
                 if ($soTienGiamGia > $donHang->tong_tien_don_hang) {
                     $soTienGiamGia = $donHang->tong_tien_don_hang;
@@ -143,9 +143,9 @@ class DonHangController extends Controller
                     'tong_so_luong' => $tongSoLuong,
                     'tong_thanh_tien_san_pham' => $tongTienSanPham,
                     'tien_ship' => $tienShip,
-                    'so_tien_giam_gia' => $soTienGiamGia,
-                    'tiet_kiem' => $soTienGiamGia + $tietKiemShip,
-                    'tong_tien' => $donHang->tong_tien_don_hang - $soTienGiamGia,
+                    'so_tien_giam_gia' => $donHang->so_tien_giam_gia,
+                    'tiet_kiem' => $donHang->so_tien_giam_gia + $tietKiemShip,
+                    'tong_tien' => $donHang->tong_tien_don_hang,
                     'anh_xac_thuc' => $donHang->vanChuyen->anh_xac_thuc ?? '',
                     'danh_gia' => $danhGiaData // Thông tin đánh giá
                 ]
@@ -230,8 +230,8 @@ class DonHangController extends Controller
             if ($donHang->ma_giam_gia) {
 
                 $soTienGiamGia = $maGiamGia->loai === 'phan_tram'
-                    ? ($donHang->tong_tien_don_hang * $maGiamGia->giam_gia / 100)
-                    : $maGiamGia->giam_gia;
+                    ? $maGiamGia->giam_toi_da
+                    : ($donHang->tong_tien_don_hang * $maGiamGia->giam_gia / 100);
 
                 if ($soTienGiamGia > $donHang->tong_tien_don_hang) {
                     $soTienGiamGia = $donHang->tong_tien_don_hang;
@@ -252,8 +252,8 @@ class DonHangController extends Controller
                     'tong_so_luong' => $tongSoLuong,
                     'tong_thanh_tien_san_pham' => $tongTienSanPham,
                     'tien_ship' => $tienShip,
-                    'so_tien_giam_gia' => $soTienGiamGia,
-                    'tiet_kiem' => $soTienGiamGia + $tietKiemShip,
+                    'so_tien_giam_gia' => $donHang->so_tien_giam_gia,
+                    'tiet_kiem' => $donHang->so_tien_giam_gia + $tietKiemShip,
                     'tong_tien' => $donHang->tong_tien_don_hang - $soTienGiamGia,
                     'anh_xac_thuc' => $donHang->vanChuyen->anh_xac_thuc ?? '',
                     'danh_gia' => $danhGiaData // Thông tin đánh giá
@@ -414,7 +414,7 @@ class DonHangController extends Controller
                         'user_id' => $userAdmin->id,
                         'tieu_de' => 'Đơn hàng ' . $donHang->ma_don_hang . ' đã có cập nhật mới',
                         'noi_dung' => '',
-                        'loai' => 'Rút tiền',
+                        'loai' => 'Ví tiền',
                         'duong_dan' => $donHang->ma_don_hang,
                         'hinh_thu_nho' => 'https://e1.pngegg.com/pngimages/542/837/png-clipart-icone-de-commande-bon-de-commande-bon-de-commande-bon-de-travail-systeme-de-gestion-des-commandes-achats-inventaire-conception-d-icones.png',
                     ]);
@@ -673,8 +673,8 @@ class DonHangController extends Controller
                         'user_id' => $userId,
                         'tieu_de' => 'Số tiền đã được hoàn trả',
                         'noi_dung' => 'Đơn hàng mã ' . $donHang->ma_don_hang . ' của bạn đã được hoàn tiền.',
-                        'loai' => 'Hoàn tiền',
-                        'duong_dan' => $donHang->ma_don_hang,
+                        'loai' => 'Ví tiền',
+                        'duong_dan' => 'vi-tai-khoan',
                         'hinh_thu_nho' => 'https://path-to-thumbnail-image.png',
                     ]);
                     broadcast(new ThongBaoMoi($thongBao))->toOthers();
@@ -716,7 +716,7 @@ class DonHangController extends Controller
                     'user_id' => $donHang->user_id,
                     'tieu_de' => 'Yêu cầu hủy hàng của bạn đã bị từ chối',
                     'noi_dung' => 'Yêu cầu hủy đơn hàng mã ' . $donHang->ma_don_hang . 'của bạn đã bị từ chối. Vui lòng liên hệ với cửa hàng',
-                    'loai' => 'Yêu cầu hủy hàng',
+                    'loai' => 'Đơn hàng',
                     'duong_dan' => $donHang->ma_don_hang,
                     'hinh_thu_nho' => 'https://e1.pngegg.com/pngimages/542/837/png-clipart-icone-de-commande-bon-de-commande-bon-de-commande-bon-de-travail-systeme-de-gestion-des-commandes-achats-inventaire-conception-d-icones.png',
                 ]);
@@ -783,9 +783,8 @@ class DonHangController extends Controller
                     'user_id' => $yeuCauRutTien->viTien->user_id,
                     'tieu_de' => 'Yêu cầu rút tiền của bạn đã được xác nhận',
                     'noi_dung' => 'Yêu cầu rút tiền từ ví của bạn đã được xác nhận. Vui lòng kiểm tra lại tài khoản ngân hàng của bạn.',
-                    'loai' => 'Yêu cầu rút tiền',
-                    'duong_dan' => 'yeu-cau-rut-tien',
-                    'id_duong_dan' => $yeuCauRutTien->id,
+                    'loai' => 'Ví tiền',
+                    'duong_dan' => 'vi-tai-khoan',
                     'hinh_thu_nho' => 'https://e1.pngegg.com/pngimages/542/837/png-clipart-icone-de-commande-bon-de-commande-bon-de-commande-bon-de-travail-systeme-de-gestion-des-commandes-achats-inventaire-conception-d-icones.png',
                 ]);
 
@@ -793,7 +792,6 @@ class DonHangController extends Controller
                 $mess = 'Xác nhận yêu cầu rút tiền thành công.';
             } else if ($validated['trang_thai'] === 'that_bai') {
                 $yeuCauRutTien->update(['trang_thai' => 'that_bai']);
-                //Lưu giao dịch
                 DB::table('lich_su_giao_diches')->insert([
                     'vi_tien_id' => $yeuCauRutTien->vi_tien_id,
                     'so_du_truoc' => $yeuCauRutTien->viTien->so_du,
@@ -806,9 +804,8 @@ class DonHangController extends Controller
                     'user_id' => $yeuCauRutTien->viTien->user_id,
                     'tieu_de' => 'Yêu cầu rút tiền của bạn đã bị từ chối',
                     'noi_dung' => 'Yêu cầu rút tiền từ ví của bạn đã bị từ chối. Vui lòng kiểm tra lại thông tin và thử lại.',
-                    'loai' => 'Yêu cầu rút tiền',
-                    'duong_dan' => 'yeu-cau-rut-tien',
-                    'id_duong_dan' => $yeuCauRutTien->id,
+                    'loai' => 'Ví tiền',
+                    'duong_dan' => 'vi-tai-khoan',
                     'hinh_thu_nho' => 'https://e1.pngegg.com/pngimages/542/837/png-clipart-icone-de-commande-bon-de-commande-bon-de-commande-bon-de-travail-systeme-de-gestion-des-commandes-achats-inventaire-conception-d-icones.png',
                 ]);
 
