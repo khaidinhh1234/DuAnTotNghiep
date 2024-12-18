@@ -89,7 +89,7 @@ const MyOrderdetail = () => {
         ),
     },
     {
-      title: "Đã giao cho ĐVVC",
+      title: "Đã giao cho nvvc",
 
       icon:
         current >= 2 ? (
