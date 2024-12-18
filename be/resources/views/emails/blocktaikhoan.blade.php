@@ -141,12 +141,8 @@
                 <h1>Xin chào {{ $name }},</h1>
                 <p>Liên hệ của bạn: {{ $email }}</p>
 
-                <p>Glow Clothing đã chặn tài khoản của bạn vì lí do vi phạm chính sách của Glow ClothingClothing</p>
-
-                <p>Lí do chúng tôi block của bạn:</p>
-                <blockquote class="noi-dung-lien-he">
-                    {{ $noidung['ly_do_block'] }}
-                </blockquote>
+                <p>Glow Clothing đã chặn tài khoản của bạn vì lí do vi phạm chính sách của Glow Clothing</p>
+                <p>Chúng tôi đã gửi thông báo này đến bạn để thông báo về việc chặn tài khoản của bạn.</p>
                 <p>Nếu bạn có khiếu nại, <a href="http://localhost:5173/contact">vui lòng ấn vào đây.</a> </p>
                 <p class="signature">Trân trọng,<br>Đội ngũ hỗ trợ khách hàng</p>
 
