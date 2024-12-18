@@ -29,9 +29,7 @@ const DetailTransport = ({ record }: any) => {
   const [open, setOpen] = useState(false);
   const queryClient = useQueryClient();
   //
-  const [url, setUrl] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [failedAttempts, setFailedAttempts] = useState(0);
+
   const [isWebcamVisible, setIsWebcamVisible] = useState<boolean>(() =>
     JSON.parse(localStorage.getItem("isWebcamVisible") || "false")
   );
@@ -93,14 +91,13 @@ const DetailTransport = ({ record }: any) => {
       }
     },
   });
-  console.log("data:", data)
-  const products = data?.data?.van_chuyen?.don_hang?.chi_tiets?.map(
-    (item: any) => {
+  console.log("data:", data);
+  const products =
+    data?.data?.van_chuyen?.don_hang?.chi_tiets?.map((item: any) => {
       return {
         ...item,
       };
-    }
-  ) || [];
+    }) || [];
   console.log(products);
   const vanchuyenData = data?.data?.van_chuyen?.don_hang;
   const shipper = data?.data?.van_chuyen?.shipper;
@@ -111,7 +108,6 @@ const DetailTransport = ({ record }: any) => {
     setOpen(false);
   };
   const tong = data?.data;
-
 
   return (
     <div>
@@ -158,8 +154,8 @@ const DetailTransport = ({ record }: any) => {
                 }`}
               > */}
               <div
-
-                className={`${record.trang_thai_van_chuyen === "Chờ xử lý"
+                className={`${
+                  record.trang_thai_van_chuyen === "Chờ xử lý"
                     ? "bg-blue-500" // Chờ xác nhận: màu vàng nhạt
                     : record.trang_thai_van_chuyen === "Đang giao hàng"
                       ? "bg-purple-500" // Đang giao hàng: màu tím
@@ -168,8 +164,7 @@ const DetailTransport = ({ record }: any) => {
                         : record.trang_thai_van_chuyen === "Giao hàng thất bại"
                           ? "bg-red-500" // Giao hàng thất bại: màu đ��
                           : "bg-red-500"
-                  } text-white px-2 py-1 font-bold rounded-lg`}
-
+                } text-white px-2 py-1 font-bold rounded-lg`}
               >
                 {record.trang_thai_van_chuyen === "chờ xử lý"
                   ? "Chờ xử lý" // Chờ xác nhận: màu vàng nhạt
@@ -198,80 +193,95 @@ const DetailTransport = ({ record }: any) => {
                   </thead>
                   <tbody>
                     {products && products.length > 0 ? (
-                      products.slice(0, visibleProducts).map((item: any, index: number) => (
-                        <tr key={index} className="my-5">
-                          <td>
-                            <div className="flex gap-5 items-center  w-[50%] my-2">
-                              <img
-                                src={
-                                  item?.bien_the_san_pham?.anh_bien_the?.length > 0
-                                    ? item?.bien_the_san_pham?.anh_bien_the[0]?.duong_dan_anh
-                                    : ""
-                                }
-                                alt={item?.bien_the_san_pham?.san_pham?.ten_san_pham || "Ảnh sản phẩm"}
-                                className="w-20 h-20"
-                              />
-                              <div>
-                                <h1 className=" font-bold truncate w-40">
-                                  {
-                                    item?.bien_the_san_pham?.san_pham
-                                      ?.ten_san_pham
-                                  }
-                                </h1>
-                                <div className="flex gap-2">
-                                  <p className="text-base">
-                                    Màu :{" "}
-                                    <span>
-                                      {" "}
-                                      {
-                                        item?.bien_the_san_pham
-                                          ?.mau_bien_the?.ten_mau_sac
-                                      }
-                                    </span>
-                                  </p>
-                                  <p className="text-base">
-                                    Size :{" "}
-                                    <span>
-                                      {" "}
-                                      {
-                                        item?.bien_the_san_pham
-                                          ?.kich_thuoc_bien_the?.kich_thuoc
-                                      }
-                                    </span>
-                                  </p>
+                      products
+                        .slice(0, visibleProducts)
+                        .map((item: any, index: number) => (
+                          <>
+                            <tr key={index} className="my-5">
+                              <td>
+                                <div className="flex gap-5 items-center  w-[50%] my-2">
+                                  <img
+                                    src={
+                                      item?.bien_the_san_pham?.anh_bien_the
+                                        ?.length > 0
+                                        ? item?.bien_the_san_pham
+                                            ?.anh_bien_the[0]?.duong_dan_anh
+                                        : ""
+                                    }
+                                    alt={
+                                      item?.bien_the_san_pham?.san_pham
+                                        ?.ten_san_pham || "Ảnh sản phẩm"
+                                    }
+                                    className="w-20 h-20"
+                                  />
+                                  <div>
+                                    <div>
+                                      <h1 className=" font-bold truncate w-40">
+                                        {
+                                          item?.bien_the_san_pham?.san_pham
+                                            ?.ten_san_pham
+                                        }
+                                      </h1>
+                                      <div className=" ">
+                                        <span className="text-base p-0 m-0">
+                                          Màu :{" "}
+                                          <span>
+                                            {
+                                              item?.bien_the_san_pham
+                                                ?.mau_bien_the?.ten_mau_sac
+                                            }
+                                          </span>
+                                        </span>
+                                        <br />
+                                        <p className="text-base p-0 m-0">
+                                          Size :{" "}
+                                          <span>
+                                            {" "}
+                                            {
+                                              item?.bien_the_san_pham
+                                                ?.kich_thuoc_bien_the
+                                                ?.kich_thuoc
+                                            }{" "}
+                                            /
+                                            {
+                                              item?.bien_the_san_pham
+                                                ?.kich_thuoc_bien_the
+                                                ?.loai_kich_thuoc
+                                            }
+                                          </span>
+                                        </p>
+                                      </div>
+                                    </div>
+                                  </div>
                                 </div>
-                              </div>
-                            </div>
-                          </td>
-                          <td className="text-center w-30 font-semibold  w-[20%]">
-                            {" "}
-                            {item?.so_luong}
-                          </td>
-                          <td className="text-center w-[20%] font-semibold  ">
-                            {item?.gia?.toLocaleString()} VNĐ
-                          </td>
-                          <td className="text-center w-[35%] font-semibold">
-                            {item?.thanh_tien?.toLocaleString()} VNĐ
-                          </td>
-                        </tr>
-                      ))
+                              </td>
+                              <td className="text-center w-30 font-semibold  w-[20%]">
+                                {" "}
+                                {item?.so_luong}
+                              </td>
+                              <td className="text-center w-[20%] font-semibold  ">
+                                {item?.gia?.toLocaleString()} VNĐ
+                              </td>
+                              <td className="text-center w-[35%] font-semibold">
+                                {item?.thanh_tien?.toLocaleString()} VNĐ
+                              </td>
+                            </tr>
+                          </>
+                        ))
                     ) : (
                       <tr>
                         <td colSpan={4}>Không có sản phẩm</td>
                       </tr>
                     )}
-                    {visibleProducts < products.length && (
-                      <div className="flex  ">
-                        <div
-                          onClick={handleLoadMore}
-                          className="font-bold"
-                        >
-                          <i className="fa-solid fa-share"></i> Xem thêm ...
-                        </div>
-                      </div>
-                    )}
-                  </tbody>
+                  </tbody>{" "}
                 </table>
+                {visibleProducts < products.length && (
+                  <div className="flex  cursor-pointer justify-center ">
+                    <div onClick={handleLoadMore} className="font-bold">
+                      <i className="fa-solid fa-share"></i> Xem thêm ...
+                    </div>
+                  </div>
+                )}
                 <div className="grid grid-cols-2 gap-5 my-5">
                   <div>
                     <div className="flex justify-between">
@@ -289,18 +299,19 @@ const DetailTransport = ({ record }: any) => {
                     <div className="flex justify-between">
                       <p>Trạng thái vận chuyển</p>{" "}
                       <span
-                        className={`   ${record.trang_thai_van_chuyen == "Chờ xử lý"
-                          ? "bg-blue-500"
-                          : record.trang_thai_van_chuyen == "Đang giao hàng"
-                            ? "bg-purple-500"
-                            : record.trang_thai_van_chuyen ==
-                              "Giao hàng thành công"
-                              ? "bg-green-500"
+                        className={`   ${
+                          record.trang_thai_van_chuyen == "Chờ xử lý"
+                            ? "bg-blue-500"
+                            : record.trang_thai_van_chuyen == "Đang giao hàng"
+                              ? "bg-purple-500"
                               : record.trang_thai_van_chuyen ==
-                                "Giao hàng thất bại"
-                                ? "bg-red-500"
-                                : "bg-red-500"
-                          }
+                                  "Giao hàng thành công"
+                                ? "bg-green-500"
+                                : record.trang_thai_van_chuyen ==
+                                    "Giao hàng thất bại"
+                                  ? "bg-red-500"
+                                  : "bg-red-500"
+                        }
                         } text-white px-2 font-bold rounded-lg h-6`}
                       >
                         {" "}
@@ -311,10 +322,10 @@ const DetailTransport = ({ record }: any) => {
                             : record.trang_thai_van_chuyen == "Đang giao hàng"
                               ? "Đang giao hàng"
                               : record.trang_thai_van_chuyen ==
-                                "Giao hàng thành công"
+                                  "Giao hàng thành công"
                                 ? "Giao hàng thành công"
                                 : record.trang_thai_van_chuyen ==
-                                  "Giao hàng thất bại"
+                                    "Giao hàng thất bại"
                                   ? "Giao hàng thất bại"
                                   : record.trang_thai_van_chuyen}
                       </span>
@@ -353,8 +364,8 @@ const DetailTransport = ({ record }: any) => {
                     <span>
                       {tong?.van_chuyen?.don_hang?.so_tien_giam_gia
                         ? tong?.van_chuyen?.don_hang?.so_tien_giam_gia?.toLocaleString(
-                          "vi-VN"
-                        )
+                            "vi-VN"
+                          )
                         : 0}{" "}
                       VNĐ
                     </span>

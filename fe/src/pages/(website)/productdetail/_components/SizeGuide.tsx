@@ -170,11 +170,15 @@ const SizeGuideModal = ({ isOpen, onClose, categoryId, productDetailId }: SizeGu
             {sizeMutation.data ? (
   <div className="mt-4">
     <div className="flex items-center justify-center">
-      <div className="text-lg">Size phù hợp: </div>
+    <div className="text-lg">Kích thước chuẩn: </div>
+    <span className="bg-blue-900 text-white px-3 py-1  mr-9 rounded-md font-bold">
+              {sizeMutation?.data?.data?.kich_thuoc}
+            </span> 
+      <div className="text-lg">Kích thước gợi ý: </div>
       <div className="ml-2 flex space-x-1">
-        {sizeMutation.data.data.goi_y.kich_thuoc_duoc_goi_y ? (
-          Array.isArray(sizeMutation.data.data.goi_y.kich_thuoc_duoc_goi_y) ? (
-            sizeMutation.data.data.goi_y.kich_thuoc_duoc_goi_y.map((size: string, index: number) => (
+        {sizeMutation.data?.data?.goi_y?.kich_thuoc_duoc_goi_y ? (
+          Array.isArray(sizeMutation?.data?.data?.goi_y?.kich_thuoc_duoc_goi_y) ? (
+            sizeMutation?.data?.data?.goi_y?.kich_thuoc_duoc_goi_y.map((size: string, index: number) => (
               <span 
                 key={index} 
                 className="bg-blue-900 text-white px-3 py-1 rounded-md font-bold"
@@ -184,7 +188,7 @@ const SizeGuideModal = ({ isOpen, onClose, categoryId, productDetailId }: SizeGu
             ))
           ) : (
             <span className="bg-blue-900 text-white px-3 py-1 rounded-md font-bold">
-              {sizeMutation.data.data.goi_y.kich_thuoc_duoc_goi_y}
+              {sizeMutation?.data?.data?.goi_y?.kich_thuoc_duoc_goi_y}
             </span>
           )
         ) : (
