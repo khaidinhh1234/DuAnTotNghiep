@@ -130,10 +130,15 @@ const Voucheruser: React.FC<VoucheruserProps> = ({
     },
     enabled: false, // Disable automatic fetch on mount
   });
-  console.log(data);
   useEffect(() => {
+    // Reset voucher selection when the `trangthai` changes (to remove previously selected voucher)
+    setClickedIndex(null);
+    setSelectedDiscount(null);
+    setGiamtoida(null);
+    onSelectVoucher({ giam_gia: null, index: null, giam_toi_da: null });
+
     refetch();
-  }, [ap, refetch]);
+  }, [ap, trangthai, refetch]);
 
   // console.log(data);
   const voucher = data?.data;
