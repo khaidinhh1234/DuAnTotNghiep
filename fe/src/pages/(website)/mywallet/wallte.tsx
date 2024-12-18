@@ -86,7 +86,11 @@ function TaiChinh() {
         toast.success("Nạp tiền thành công");
         queryClient.invalidateQueries({ queryKey: ["walletData"] });
         queryClient.invalidateQueries({ queryKey: ["walletStatus"] });
-        refetchWalletData();
+        setTimeout(() => {
+          refetchWalletData();
+          refetchWalletStatus();
+        }, 1500);
+      
       }
     },
     onError: (error: any) => {
