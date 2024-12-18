@@ -36,7 +36,7 @@ class LichSuHoatDongController extends Controller
 
         if ($user->vaiTros()->first()->ten_vai_tro == 'Quản trị viên') {
             $data = $query->orderByDesc('lich_su_hoat_dongs.id')->get();
-        } elseif ($user->vaiTros()->first()->ten_vai_tro == 'Bán hàng') {
+        } elseif ($user->vaiTros()->first()->ten_vai_tro !== 'Quản trị viên') {
             $data = $query->where('lich_su_hoat_dongs.nguoi_thao_tac', $user->id)
                 ->orderByDesc('lich_su_hoat_dongs.id')
                 ->get();
