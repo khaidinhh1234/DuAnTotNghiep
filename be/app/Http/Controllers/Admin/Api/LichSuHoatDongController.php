@@ -32,6 +32,8 @@ class LichSuHoatDongController extends Controller
             ->join('vai_tro_tai_khoan', 'users.id', '=', 'vai_tro_tai_khoan.user_id')
             ->join('vai_tros', 'vai_tro_tai_khoan.vai_tro_id', '=', 'vai_tros.id')
             ->where('vai_tros.ten_vai_tro', '!=', 'Khách hàng')
+            ->where('vai_tros.ten_vai_tro', '!=', 'Quản trị viên')
+
             ->where('vai_tros.ten_vai_tro', '!=', 'Người giao hàng');
 
         if ($user->vaiTros()->first()->ten_vai_tro == 'Quản trị viên') {
