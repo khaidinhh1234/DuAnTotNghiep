@@ -32,7 +32,7 @@ class ThongBaoTelegramController extends Controller
         $message .= "Trạng thái: {$vanChuyen->trang_thai_van_chuyen}\n";
         $message .= "COD: {$vanChuyen->tien_cod} VND\n";
         $message .= "Khách hàng: {$donHang->ten_nguoi_dat_hang}\n";
-        $message .= "Đường dẫn: " . "http://192.168.250.174:5173/shipper" . "\n";
+        $message .= "Đường dẫn: " . "http://192.168.250.174:5173/shipper2" . "\n";
         $message .= "Ghi chú: {$vanChuyen->ghi_chu}\n";
 
         // Lấy danh sách các shipper có số điện thoại và `chat_id`
