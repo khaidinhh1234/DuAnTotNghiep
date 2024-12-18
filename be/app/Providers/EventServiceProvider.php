@@ -37,7 +37,6 @@ class EventServiceProvider extends ServiceProvider
             SendMailPhanHoiLienHe::class,
             SendMailForgotMaXacMinh::class,
             GuiMailHoanTatDonHang::class,
-            SendMailBlockTaiKhoan::class,
         ],
         DonHangHoanTat::class => [
             GuiThongBaoDonHangHoanTat::class,

@@ -106,7 +106,16 @@ class TrangSanPhamController extends Controller
     public function layDanhMucMauSacKichThuoc(Request $request)
     {
         // $id = $request->get('id') ?? null;
-        $loai = $request->get('loai') ?? null;
+        $text = $request->get('loai') ?? null;
+        foreach (explode('-', $text) as $loai) {
+            if ($loai == 'nam') {
+                $loai = 'nam';
+            } elseif ($loai == 'nu') {
+                $loai = 'nu';
+            } elseif ($loai == 'tre-em') {
+                $loai = 'tre_em';
+            }
+        };
         try {
             // Bắt đầu transaction
             DB::beginTransaction();
@@ -127,7 +136,7 @@ class TrangSanPhamController extends Controller
             }])->get()->filter(function ($kichThuoc) use ($loai) {
                 if ($kichThuoc->loai_kich_thuoc == $loai) {
                     return $kichThuoc;
-                } else if ($kichThuoc->loai_kich_thuoc == 'tre_em' && $loai == 'tre-em') {
+                } else if ($kichThuoc->loai_kich_thuoc == 'tre_em' && $loai == 'tre_em') {
                     return $kichThuoc;
                 }
             });
