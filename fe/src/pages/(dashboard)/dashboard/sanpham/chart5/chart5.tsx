@@ -95,7 +95,7 @@ const Chart5 = ({ datestart, dateend, top }: any) => {
 
         yaxis: {
           labels: {
-            formatter: (val: number) => `${val.toLocaleString("vi-VN")} đ`,
+            formatter: (val: number) => `${val.toLocaleString("vi-VN")}`,
           },
         },
       });

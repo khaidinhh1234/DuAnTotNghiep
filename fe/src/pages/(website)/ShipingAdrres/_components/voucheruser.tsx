@@ -197,7 +197,7 @@ const Voucheruser: React.FC<VoucheruserProps> = ({
                 {loading ? <Spin size="small" /> : "Tìm kiếm"}
               </button>
             </div>
-            <div className="grid grid-cols-1 gap-5 overflow-y-auto ">
+            <div className="grid grid-cols-1 gap-5 overflow-y-auto  h-10">
               {voucher && voucher.length > 0 ? (
                 vouchertrue?.map((item: any, index: number) => (
                   <div

@@ -481,7 +481,7 @@ const ProductItem = ({
               </div>
             )}
           {(status === "Chờ xác nhận" ||
-            (hoanhangtuchoi && status === "Đã xác nhận" && hoanhangtuchoi) ||
+            status === "Đã xác nhận" ||
             status === "Chờ khách hàng xác nhận") && (
             <button
               className={`${
