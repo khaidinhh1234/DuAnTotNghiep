@@ -26,7 +26,6 @@ const History = () => {
       ...item,
     };
   });
-  // console.log(lichsus);
   return (
     <div className="p-4">
       <div className="bg-white rounded-lg shadow-lg p-6 border">
@@ -62,7 +61,7 @@ const History = () => {
                     </td>
                     <td className="py-3 px-4 border-b">{item?.ngay}</td>
                     <td className="py-3 px-4 border-b">
-                      {item?.amount?.toLocaleString("vi-VN")}₫
+                      {Number(item?.amount).toLocaleString("vi-VN")}₫
                     </td>
                     <td className="py-3 px-4 border-b text-blue-500 font-semibold">
                       {item.don_hang.phuong_thuc_thanh_toan === "Momo_ATM" ? (
