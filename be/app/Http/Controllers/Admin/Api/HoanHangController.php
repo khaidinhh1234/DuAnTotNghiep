@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin\api;
 
 use App\Http\Controllers\Controller;
+use App\Models\DonHang;
 use App\Models\Hoan_hang;
 use App\Models\HoanTien;
 use Carbon\Carbon;
@@ -115,6 +116,10 @@ class HoanHangController extends Controller
                     $giaoDichVi = $hoanTien->giaoDichVi;
                     $soDuTruoc = $giaoDichVi->viTien->so_du;
                     $giaoDichVi = $hoanTien->giaoDichVi;
+                    $hoanTien->donHang->update([
+                        'trang_thai_don_hang' => DonHang::TTDH_HH,
+                        'ngay_hoan' => $hoanHang->ngay_tao
+                    ]);
                     //Lưu giao dịch
                     DB::table('lich_su_giao_diches')->insert([
                         'vi_tien_id' => $giaoDichVi->viTien->id,

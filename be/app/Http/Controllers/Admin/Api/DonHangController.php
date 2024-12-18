@@ -121,8 +121,8 @@ class DonHangController extends Controller
             if ($donHang->ma_giam_gia) {
 
                 $soTienGiamGia = $maGiamGia->loai === 'phan_tram'
-                    ? ($donHang->tong_tien_don_hang * $maGiamGia->giam_gia / 100)
-                    : $maGiamGia->giam_gia;
+                    ? $maGiamGia->giam_toi_da
+                    : ($donHang->tong_tien_don_hang * $maGiamGia->giam_gia / 100);
 
                 if ($soTienGiamGia > $donHang->tong_tien_don_hang) {
                     $soTienGiamGia = $donHang->tong_tien_don_hang;
@@ -143,9 +143,9 @@ class DonHangController extends Controller
                     'tong_so_luong' => $tongSoLuong,
                     'tong_thanh_tien_san_pham' => $tongTienSanPham,
                     'tien_ship' => $tienShip,
-                    'so_tien_giam_gia' => $soTienGiamGia,
-                    'tiet_kiem' => $soTienGiamGia + $tietKiemShip,
-                    'tong_tien' => $donHang->tong_tien_don_hang - $soTienGiamGia,
+                    'so_tien_giam_gia' => $donHang->so_tien_giam_gia,
+                    'tiet_kiem' => $donHang->so_tien_giam_gia + $tietKiemShip,
+                    'tong_tien' => $donHang->tong_tien_don_hang,
                     'anh_xac_thuc' => $donHang->vanChuyen->anh_xac_thuc ?? '',
                     'danh_gia' => $danhGiaData // Thông tin đánh giá
                 ]
@@ -230,8 +230,8 @@ class DonHangController extends Controller
             if ($donHang->ma_giam_gia) {
 
                 $soTienGiamGia = $maGiamGia->loai === 'phan_tram'
-                    ? ($donHang->tong_tien_don_hang * $maGiamGia->giam_gia / 100)
-                    : $maGiamGia->giam_gia;
+                    ? $maGiamGia->giam_toi_da
+                    : ($donHang->tong_tien_don_hang * $maGiamGia->giam_gia / 100);
 
                 if ($soTienGiamGia > $donHang->tong_tien_don_hang) {
                     $soTienGiamGia = $donHang->tong_tien_don_hang;
@@ -252,8 +252,8 @@ class DonHangController extends Controller
                     'tong_so_luong' => $tongSoLuong,
                     'tong_thanh_tien_san_pham' => $tongTienSanPham,
                     'tien_ship' => $tienShip,
-                    'so_tien_giam_gia' => $soTienGiamGia,
-                    'tiet_kiem' => $soTienGiamGia + $tietKiemShip,
+                    'so_tien_giam_gia' => $donHang->so_tien_giam_gia,
+                    'tiet_kiem' => $donHang->so_tien_giam_gia + $tietKiemShip,
                     'tong_tien' => $donHang->tong_tien_don_hang - $soTienGiamGia,
                     'anh_xac_thuc' => $donHang->vanChuyen->anh_xac_thuc ?? '',
                     'danh_gia' => $danhGiaData // Thông tin đánh giá
