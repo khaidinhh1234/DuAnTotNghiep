@@ -4,6 +4,7 @@ import { Button, message, Modal } from "antd";
 import { useEffect, useState } from "react";
 
 const Detail = ({ record }: any) => {
+  const [lengthss, setLengthss] = useState(3);
   const [open, setOpen] = useState(false);
   const queryClient = useQueryClient();
 
@@ -289,77 +290,97 @@ const Detail = ({ record }: any) => {
                     </tr>
                   </thead>
                   <tbody>
-                    {products?.map((item: any, index: number) => (
-                      <tr key={index} className="my-5">
-                        <td>
-                          <div className="flex gap-5 items-center  w-[50%] my-2">
-                            <img
-                              src={
-                                item?.bien_the_san_pham?.san_pham?.anh_san_pham
-                              }
-                              alt={""}
-                              className="w-20 h-20"
-                            />
-                            <div>
-                              <h1 className=" font-bold truncate w-40">
-                                {
-                                  item?.bien_the_san_pham?.san_pham
-                                    ?.ten_san_pham
+                    {products
+                      ?.slice(0, lengthss)
+                      .map((item: any, index: number) => (
+                        <tr key={index} className="my-5">
+                          <td>
+                            <div className="flex gap-5 items-center  w-[50%] my-2">
+                              <img
+                                src={
+                                  item?.bien_the_san_pham?.anh_bien_the
+                                    ?.length > 0
+                                    ? item?.bien_the_san_pham?.anh_bien_the[0]
+                                        ?.duong_dan_anh
+                                    : ""
                                 }
-                              </h1>
-                              <div className=" ">
-                                <span className="text-base p-0 m-0">
-                                  Màu :{" "}
-                                  <span>
-                                    {
-                                      item?.bien_the_san_pham?.mau_bien_the
-                                        ?.ten_mau_sac
-                                    }
+                                alt={
+                                  item?.bien_the_san_pham?.san_pham
+                                    ?.anh_san_pham
+                                }
+                                className="w-20 h-20"
+                              />
+                              <div>
+                                <h1 className=" font-bold truncate w-40">
+                                  {
+                                    item?.bien_the_san_pham?.san_pham
+                                      ?.ten_san_pham
+                                  }
+                                </h1>
+                                <div className=" ">
+                                  <span className="text-base p-0 m-0">
+                                    Màu :{" "}
+                                    <span>
+                                      {
+                                        item?.bien_the_san_pham?.mau_bien_the
+                                          ?.ten_mau_sac
+                                      }
+                                    </span>
                                   </span>
-                                </span>
-                                <br />
-                                <p className="text-base p-0 m-0">
-                                  Size :{" "}
-                                  <span>
-                                    {" "}
-                                    {
-                                      item?.bien_the_san_pham
-                                        ?.kich_thuoc_bien_the?.kich_thuoc
-                                    }{" "}
-                                    /
-                                    {
-                                      item?.bien_the_san_pham
-                                        ?.kich_thuoc_bien_the?.loai_kich_thuoc
-                                    }
-                                  </span>
-                                </p>
+                                  <br />
+                                  <p className="text-base p-0 m-0">
+                                    Size :{" "}
+                                    <span>
+                                      {" "}
+                                      {
+                                        item?.bien_the_san_pham
+                                          ?.kich_thuoc_bien_the?.kich_thuoc
+                                      }{" "}
+                                      /
+                                      {
+                                        item?.bien_the_san_pham
+                                          ?.kich_thuoc_bien_the?.loai_kich_thuoc
+                                      }
+                                    </span>
+                                  </p>
+                                </div>
                               </div>
                             </div>
-                          </div>
-                        </td>
-                        <td className="text-center w-30 font-semibold  w-[20%]">
-                          {" "}
-                          {item?.so_luong}
-                        </td>
-                        <td className="text-center w-[20%] font-semibold  ">
-                          <span className="text-gray-400 line-through text-xs">
-                            {item?.bien_the_san_pham?.gia_ban?.toLocaleString() ??
-                              0}{" "}
-                          </span>{" "}
-                          {(
-                            item?.bien_the_san_pham?.gia_khuyen_mai_tam_thoi ??
-                            item?.bien_the_san_pham?.gia_khuyen_mai ??
-                            item?.bien_the_san_pham?.gia_ban
-                          )?.toLocaleString() ?? 0}
-                          VNĐ
-                        </td>
-                        <td className="text-center w-[35%] font-semibold">
-                          {item?.thanh_tien?.toLocaleString() ?? 0} VNĐ
-                        </td>
-                      </tr>
-                    ))}
+                          </td>
+                          <td className="text-center w-30 font-semibold  w-[20%]">
+                            {" "}
+                            {item?.so_luong}
+                          </td>
+                          <td className="text-center w-[20%] font-semibold  ">
+                            <span className="text-gray-400 line-through text-xs">
+                              {item?.bien_the_san_pham?.gia_ban?.toLocaleString() ??
+                                0}{" "}
+                            </span>{" "}
+                            {(
+                              item?.bien_the_san_pham
+                                ?.gia_khuyen_mai_tam_thoi ??
+                              item?.bien_the_san_pham?.gia_khuyen_mai ??
+                              item?.bien_the_san_pham?.gia_ban
+                            )?.toLocaleString() ?? 0}
+                            VNĐ
+                          </td>
+                          <td className="text-center w-[35%] font-semibold">
+                            {item?.thanh_tien?.toLocaleString() ?? 0} VNĐ
+                          </td>
+                        </tr>
+                      ))}
                   </tbody>
                 </table>
+                {products?.length > lengthss && (
+                  <div className="flex justify-center">
+                    <button
+                      onClick={() => setLengthss(products?.length)}
+                      className="text-blue-500 "
+                    >
+                      Xem thêm
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
             <div className="px-5">

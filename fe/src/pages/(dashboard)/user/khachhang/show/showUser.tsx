@@ -57,7 +57,7 @@ const ShowNhanvien = () => {
           </div>
           <div className="text-2xl font-bold">
             <i className="fa-regular fa-star text-gray-500 "></i>
-            <span className="px-2">{trangthai?.so_luong_don_hang} </span>
+            <span className="px-2">{trangthai?.so_luong_danh_gia} </span>
             <br />
             <span className="text-gray-500 text-lg">Đánh giá</span>
           </div>

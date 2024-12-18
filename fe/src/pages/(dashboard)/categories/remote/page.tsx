@@ -79,11 +79,11 @@ const CategoriesRemote: React.FC = () => {
       sorter: (a: any, b: any) => a.cha_id.localeCompare(b.cha_id),
       render: (text: string) => categoriesMap.get(text) || "________",
     },
-    {
-      title: "Thời gian tạo",
-      key: "createdAt",
-      dataIndex: "createdAt",
-    },
+    // {
+    //   title: "Thời gian xóa",
+    //   key: "delete_at",
+    //   dataIndex: "delete_at",
+    // },
     {
       title: "Quản trị",
       key: "action",

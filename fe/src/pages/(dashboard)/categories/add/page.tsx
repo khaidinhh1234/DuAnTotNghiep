@@ -39,9 +39,15 @@ const CategoriesAdd = () => {
       form.resetFields();
       nav("/admin/categories/add");
     },
-    onError: (error) => {
-      message.error(error.message);
+    onError: (error: any) => {
+      if (error.response && error.response.data) {
+        const errorMessage = error.response.data.error || "Có lỗi xảy ra!";
+        message.error(errorMessage);
+      } else {
+        message.error("Đã có lỗi xảy ra khi thêm danh mục.");
+      }
     },
+    
   });
 
   const onFinish = async (values: any) => {

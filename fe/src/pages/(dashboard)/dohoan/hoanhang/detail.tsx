@@ -126,7 +126,7 @@ const Detail = ({ record }: any) => {
                                   || item?.bien_the_san_pham?.san_pham
                                     ?.anh_san_pham
                                 }
-                                alt=""
+                                alt={item?.bien_the_san_pham?.san_pham?.ten_san_pham || "Ảnh sản phẩm"}
                                 className="w-20 h-20 object-cover rounded"
                               />
                               <div>
