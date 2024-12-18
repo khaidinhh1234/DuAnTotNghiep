@@ -604,8 +604,8 @@ class ThongKeTongQuanController extends Controller
             $ngayBatDau = Carbon::parse($request->input('ngay_bat_dau') ?? now()->subDays(9));
             $ngayKetThuc = Carbon::parse($request->input('ngay_ket_thuc') ?? now())->endOfDay();
 
-            // Các trạng thái đơn hàng hợp lệ
-            $trangThaiHopLe = [
+            // Các trạng thái đơn hàng cần lọc
+            $trangThai = [
                 DonHang::TTDH_DXH,
                 DonHang::TTDH_DGH,
                 DonHang::TTDH_HTDH,
@@ -613,45 +613,69 @@ class ThongKeTongQuanController extends Controller
                 DonHang::TTDH_CXNHH
             ];
 
-            // Lấy danh sách đơn hàng theo điều kiện
-            $donHangs = DonHang::whereIn('trang_thai_don_hang', $trangThaiHopLe)
-                ->where(function ($query) use ($ngayBatDau, $ngayKetThuc) {
-                    $query->where(function ($q) use ($ngayBatDau, $ngayKetThuc) {
-                        $q->where('phuong_thuc_thanh_toan', DonHang::PTTT_TT)
-                            ->where('trang_thai_thanh_toan', DonHang::TTTT_DTT)
-                            ->whereBetween('ngay_hoan_thanh_don', [$ngayBatDau, $ngayKetThuc]);
-                    })
-                        ->orWhere(function ($q) use ($ngayBatDau, $ngayKetThuc) {
-                            $q->whereIn('phuong_thuc_thanh_toan', [DonHang::PTTT_MM_ATM, DonHang::PTTT_MM_QR])
-                                ->where('trang_thai_thanh_toan', DonHang::TTTT_DTT)
-                                ->whereBetween('created_at', [$ngayBatDau, $ngayKetThuc]);
-                        });
+            // Lọc đơn hàng theo các điều kiện mới
+            $donHangs = DonHang::where(function ($query) use ($ngayBatDau, $ngayKetThuc, $trangThai) {
+                // Trường hợp thanh toán PTTT_TT
+                $query->where(function ($q) use ($ngayBatDau, $ngayKetThuc) {
+                    $q->where('phuong_thuc_thanh_toan', DonHang::PTTT_TT)
+                        ->where('trang_thai_don_hang', DonHang::TTDH_HTDH)
+                        ->where('trang_thai_thanh_toan', DonHang::TTTT_DTT)
+                        ->whereBetween('ngay_hoan_thanh_don', [$ngayBatDau, $ngayKetThuc]);
                 })
-                ->get();
+                    // Trường hợp thanh toán PTTT_MM_ATM hoặc PTTT_MM_QR
+                    ->orWhere(function ($q) use ($ngayBatDau, $ngayKetThuc, $trangThai) {
+                        $q->whereIn('phuong_thuc_thanh_toan', [DonHang::PTTT_MM_ATM, DonHang::PTTT_MM_QR])
+                            ->whereIn('trang_thai_don_hang', $trangThai)
+                            ->where('trang_thai_thanh_toan', DonHang::TTTT_DTT)
+                            ->whereBetween('created_at', [$ngayBatDau, $ngayKetThuc]);
+                    });
+            })->get();
 
+            // Tính tổng doanh thu và số đơn hàng trong khoảng thời gian
+            $tongDoanhThu = $donHangs->sum('tong_tien_don_hang');
             $soDonHang = $donHangs->count();
 
-            // Tính khoảng thời gian
+            // Tính khoảng thời gian (số ngày)
             $khoangThoiGian = $ngayBatDau->diffInDays($ngayKetThuc) + 1;
+
+            // Khoảng thời gian trước (để so sánh)
             $ngayBatDauTruoc = $ngayBatDau->copy()->subDays($khoangThoiGian);
             $ngayKetThucTruoc = $ngayKetThuc->copy()->subDays($khoangThoiGian);
 
             // Lấy danh sách đơn hàng trong khoảng thời gian trước
-            $donHangsTruoc = DonHang::where('trang_thai_don_hang', DonHang::TTDH_HTDH)
-                ->whereBetween('ngay_hoan_thanh_don', [$ngayBatDauTruoc, $ngayKetThucTruoc])
-                ->get();
+            $donHangsTruoc = DonHang::where(function ($query) use ($ngayBatDauTruoc, $ngayKetThucTruoc, $trangThai) {
+                $query->where(function ($q) use ($ngayBatDauTruoc, $ngayKetThucTruoc) {
+                    $q->where('phuong_thuc_thanh_toan', DonHang::PTTT_TT)
+                        ->where('trang_thai_don_hang', DonHang::TTDH_HTDH)
+                        ->where('trang_thai_thanh_toan', DonHang::TTTT_DTT)
+                        ->whereBetween('ngay_hoan_thanh_don', [$ngayBatDauTruoc, $ngayKetThucTruoc]);
+                })->orWhere(function ($q) use ($ngayBatDauTruoc, $ngayKetThucTruoc, $trangThai) {
+                    $q->whereIn('phuong_thuc_thanh_toan', [DonHang::PTTT_MM_ATM, DonHang::PTTT_MM_QR])
+                        ->whereIn('trang_thai_don_hang', $trangThai)
+                        ->where('trang_thai_thanh_toan', DonHang::TTTT_DTT)
+                        ->whereBetween('created_at', [$ngayBatDauTruoc, $ngayKetThucTruoc]);
+                });
+            })->get();
 
+            // Tính tổng doanh thu và số đơn hàng trong khoảng thời gian trước
+            $tongDoanhThuTruoc = $donHangsTruoc->sum('tong_tien_don_hang');
             $soDonHangTruoc = $donHangsTruoc->count();
 
-            // Tính tỷ lệ tăng/giảm doanh số
-            $tiLeTangGiamDoanhSo = $soDonHangTruoc > 0
+            // Tính tỷ lệ tăng/giảm doanh thu
+            $tiLeTangGiamDoanhThu = $tongDoanhThuTruoc > 0
+                ? (($tongDoanhThu - $tongDoanhThuTruoc) / $tongDoanhThuTruoc) * 100
+                : ($tongDoanhThu > 0 ? 100 : 0);
+            $tiLeTangGiamDonHang = $soDonHangTruoc > 0
                 ? (($soDonHang - $soDonHangTruoc) / $soDonHangTruoc) * 100
                 : ($soDonHang > 0 ? 100 : 0);
-
+            // Trả về dữ liệu dưới dạng JSON
             return response()->json([
+                'tong_doanh_thu' => $tongDoanhThu,
                 'tong_doanh_so_hien_tai' => $soDonHang,
+                'tong_doanh_thu_truoc' => $tongDoanhThuTruoc,
                 'tong_doanh_so_truoc' => $soDonHangTruoc,
-                'ti_le_tang_giam_don_hang' => round($tiLeTangGiamDoanhSo, 2)
+                'ti_le_tang_giam_doanh_thu' => round($tiLeTangGiamDoanhThu, 2),
+                'ti_le_tang_giam_don_hang' => round($tiLeTangGiamDonHang, 2)
             ]);
         } catch (\Exception $e) {
             return response()->json([
@@ -660,6 +684,78 @@ class ThongKeTongQuanController extends Controller
             ], 500);
         }
     }
+    // public function thongKeDoanhSoSanPham(Request $request)
+    // {
+    //     try {
+    //         $ngayBatDau = Carbon::parse($request->input('ngay_bat_dau') ?? now()->subDays(9));
+    //         $ngayKetThuc = Carbon::parse($request->input('ngay_ket_thuc') ?? now())->endOfDay();
+    //         $trangThai = [
+    //             DonHang::TTDH_DXH,
+    //             DonHang::TTDH_DGH,
+    //             DonHang::TTDH_HTDH,
+    //             DonHang::TTDH_CKHCN,
+    //             DonHang::TTDH_CXNHH
+    //         ];
+
+    //         $donHangs = DonHang::whereIn('trang_thai_don_hang', $trangThai)
+    //             ->where(function ($query) use ($ngayBatDau, $ngayKetThuc) {
+    //                 $query->where(function ($q) use ($ngayBatDau, $ngayKetThuc) {
+    //                     $q->where('phuong_thuc_thanh_toan', DonHang::PTTT_TT)
+    //                         ->where('trang_thai_thanh_toan', DonHang::TTTT_DTT)
+    //                         ->whereBetween('ngay_hoan_thanh_don', [$ngayBatDau, $ngayKetThuc]);
+    //                 })->orWhere(function ($q) use ($ngayBatDau, $ngayKetThuc) {
+    //                     $q->whereIn('phuong_thuc_thanh_toan', [DonHang::PTTT_MM_ATM, DonHang::PTTT_MM_QR])
+    //                         ->where('trang_thai_thanh_toan', DonHang::TTTT_DTT)
+    //                         ->whereBetween('created_at', [$ngayBatDau, $ngayKetThuc]);
+    //                 });
+    //             })->get();
+
+    //         $tongDoanhThu = $donHangs->sum('tong_tien_don_hang');
+    //         $soDonHang = $donHangs->count();
+
+    //         $khoangThoiGian = $ngayBatDau->diffInDays($ngayKetThuc) + 1;
+    //         $ngayBatDauTruoc = $ngayBatDau->copy()->subDays($khoangThoiGian);
+    //         $ngayKetThucTruoc = $ngayKetThuc->copy()->subDays($khoangThoiGian);
+
+    //         $donHangsTruoc = DonHang::whereIn('trang_thai_don_hang', $trangThai)
+    //             ->where(function ($query) use ($ngayBatDauTruoc, $ngayKetThucTruoc) {
+    //                 $query->where(function ($q) use ($ngayBatDauTruoc, $ngayKetThucTruoc) {
+    //                     $q->where('phuong_thuc_thanh_toan', DonHang::PTTT_TT)
+    //                         ->where('trang_thai_thanh_toan', DonHang::TTTT_DTT)
+    //                         ->whereBetween('ngay_hoan_thanh_don', [$ngayBatDauTruoc, $ngayKetThucTruoc]);
+    //                 })->orWhere(function ($q) use ($ngayBatDauTruoc, $ngayKetThucTruoc) {
+    //                     $q->whereIn('phuong_thuc_thanh_toan', [DonHang::PTTT_MM_ATM, DonHang::PTTT_MM_QR])
+    //                         ->where('trang_thai_thanh_toan', DonHang::TTTT_DTT)
+    //                         ->whereBetween('created_at', [$ngayBatDauTruoc, $ngayKetThucTruoc]);
+    //                 });
+    //             })->get();
+
+    //         $tongDoanhThuTruoc = $donHangsTruoc->sum('tong_tien_don_hang');
+    //         $soDonHangTruoc = $donHangsTruoc->count();
+
+    //         $tiLeTangGiamDoanhThu = $tongDoanhThuTruoc > 0
+    //             ? (($tongDoanhThu - $tongDoanhThuTruoc) / $tongDoanhThuTruoc) * 100
+    //             : ($tongDoanhThu > 0 ? 100 : 0);
+
+    //         $tiLeTangGiamDonHang = $soDonHangTruoc > 0
+    //             ? (($soDonHang - $soDonHangTruoc) / $soDonHangTruoc) * 100
+    //             : ($soDonHang > 0 ? 100 : 0);
+
+    //         return response()->json([
+    //             'tong_doanh_thu' => $tongDoanhThu,
+    //             'tong_doanh_so_hien_tai' => $soDonHang,
+    //             'tong_doanh_thu_truoc' => $tongDoanhThuTruoc,
+    //             'tong_doanh_so_truoc' => $soDonHangTruoc,
+    //             'ti_le_tang_giam_doanh_thu' => round($tiLeTangGiamDoanhThu, 2),
+    //             'ti_le_tang_giam_don_hang' => round($tiLeTangGiamDonHang, 2)
+    //         ]);
+    //     } catch (\Exception $e) {
+    //         return response()->json([
+    //             'error' => 'Đã xảy ra lỗi',
+    //             'message' => $e->getMessage()
+    //         ], 500);
+    //     }
+    // }
 
     public function thongKeDoanhThuTB(Request $request)
     {

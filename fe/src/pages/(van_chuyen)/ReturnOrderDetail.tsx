@@ -85,7 +85,7 @@ const ReturnOrderDetail = ({ record }: any) => {
                       className="w-20 h-20 md:w-24 md:h-28 object-cover rounded mr-4"
                     />
                   <div className="flex flex-col justify-between w-full">
-                    <h3 className="text-sm md:text-lg font-semibold truncate hover:text-red-500 cursor-pointer">
+                    <h3 className="text-sm md:text-lg font-semibold truncate-title hover:text-red-500 cursor-pointer">
                       {product?.bien_the_san_pham?.san_pham?.ten_san_pham}
                     </h3>
                     <div className="text-xs md:text-base text-gray-500 mt-1">
@@ -226,7 +226,7 @@ const ReturnOrderDetail = ({ record }: any) => {
                       className="w-20 h-20 md:w-24 md:h-28 object-cover rounded mr-4"
                     />
                     <div className="flex flex-col justify-between w-full">
-                      <h3 className="text-sm md:text-lg font-semibold truncate hover:text-red-500 cursor-pointer">
+                      <h3 className="text-sm md:text-lg font-semibold truncate-title hover:text-red-500 cursor-pointer">
                         {product?.bien_the_san_pham?.san_pham?.ten_san_pham}
                       </h3>
                       <div className="text-xs md:text-base text-gray-500 mt-1">
