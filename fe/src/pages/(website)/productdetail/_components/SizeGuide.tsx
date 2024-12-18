@@ -24,9 +24,9 @@ interface SizeGuideModalProps {
 }
 
 const SizeGuideModal = ({ isOpen, onClose, categoryId, productDetailId }: SizeGuideModalProps) => {
-  const [activeTab, setActiveTab] = useState('1');
-  const [height, setHeight] = useState(160);
-  const [weight, setWeight] = useState(55);
+  const [activeTab, setActiveTab] = useState('2');
+  // const [height, setHeight] = useState(160);
+  // const [weight, setWeight] = useState(55);
 // console.log('Category ID:', categoryId);
   const { data: sizeData, isSuccess } = useQuery({
     queryKey: ['sizes'],
@@ -36,18 +36,18 @@ const SizeGuideModal = ({ isOpen, onClose, categoryId, productDetailId }: SizeGu
     }
   });
 
-  const sizeMutation = useMutation({
-    mutationFn: (data: { chieu_cao: number; can_nang: number; san_pham_id: number }) => 
-      instanceClient.post('/goi-y-kich-thuoc', data),
-  });
+  // const sizeMutation = useMutation({
+  //   mutationFn: (data: { chieu_cao: number; can_nang: number; san_pham_id: number }) => 
+  //     instanceClient.post('/goi-y-kich-thuoc', data),
+  // });
 
-  const handleGetSizeSuggestion = () => {
-    sizeMutation.mutate({
-      chieu_cao: height,
-      can_nang: weight,
-      san_pham_id: productDetailId
-    });
-  };
+  // const handleGetSizeSuggestion = () => {
+  //   sizeMutation.mutate({
+  //     chieu_cao: height,
+  //     can_nang: weight,
+  //     san_pham_id: productDetailId
+  //   });
+  // };
 
   const renderTable = (data: SizeData[]) => (
     <table className="min-w-full bg-white border border-gray-300">
@@ -75,75 +75,75 @@ const SizeGuideModal = ({ isOpen, onClose, categoryId, productDetailId }: SizeGu
     </table>
   );
 
-  const sizeConfigs = {
-    1: {
-      height: { min: 160, max: 185, minLabel: "1m60", maxLabel: "1m85" },
-      weight: { min: 55, max: 100, minLabel: "55kg", maxLabel: "100kg" }
-    },
-    2: {
-      height: { min: 150, max: 170, minLabel: "1m50", maxLabel: "1m70" },
-      weight: { min: 45, max: 70, minLabel: "45kg", maxLabel: "70kg" }
-    },
-    3: {
-      height: { min: 75, max: 140, minLabel: "75cm", maxLabel: "140cm" },
-      weight: { min: 8, max: 35, minLabel: "8kg", maxLabel: "35kg" }
-    }
-  };
+  // const sizeConfigs = {
+  //   1: {
+  //     height: { min: 160, max: 185, minLabel: "1m60", maxLabel: "1m85" },
+  //     weight: { min: 55, max: 100, minLabel: "55kg", maxLabel: "100kg" }
+  //   },
+  //   2: {
+  //     height: { min: 150, max: 170, minLabel: "1m50", maxLabel: "1m70" },
+  //     weight: { min: 45, max: 70, minLabel: "45kg", maxLabel: "70kg" }
+  //   },
+  //   3: {
+  //     height: { min: 75, max: 140, minLabel: "75cm", maxLabel: "140cm" },
+  //     weight: { min: 8, max: 35, minLabel: "8kg", maxLabel: "35kg" }
+  //   }
+  // };
 
-  const renderSizeSelector = () => {
-    const config = sizeConfigs[categoryId as keyof typeof sizeConfigs];
-    if (!config) return null;
+  // const renderSizeSelector = () => {
+  //   const config = sizeConfigs[categoryId as keyof typeof sizeConfigs];
+  //   if (!config) return null;
 
-    return (
-      <div>
-        <Row>
-          <Col span={14} offset={3}>
-            <span>Chiều cao</span>
-          </Col>
-        </Row>
-        <Row style={{ marginBottom: "10px" }}>
-          <Col span={3}></Col>
-          <Col span={14}>
-            <Slider
-              min={config.height.min}
-              max={config.height.max}
-              value={height}
-              onChange={(value) => setHeight(value)}
-              marks={{
-                [config.height.min]: config.height.minLabel,
-                [config.height.max]: config.height.maxLabel,
-              }}
-            />
-          </Col>
-          <Col span={4}>
-            {categoryId === 3 ? `${height}cm` : `${(height / 100).toFixed(2)}m`}
-          </Col>
-        </Row>
+  //   return (
+  //     <div>
+  //       <Row>
+  //         <Col span={14} offset={3}>
+  //           <span>Chiều cao</span>
+  //         </Col>
+  //       </Row>
+  //       <Row style={{ marginBottom: "10px" }}>
+  //         <Col span={3}></Col>
+  //         <Col span={14}>
+  //           <Slider
+  //             min={config.height.min}
+  //             max={config.height.max}
+  //             value={height}
+  //             onChange={(value) => setHeight(value)}
+  //             marks={{
+  //               [config.height.min]: config.height.minLabel,
+  //               [config.height.max]: config.height.maxLabel,
+  //             }}
+  //           />
+  //         </Col>
+  //         <Col span={4}>
+  //           {categoryId === 3 ? `${height}cm` : `${(height / 100).toFixed(2)}m`}
+  //         </Col>
+  //       </Row>
 
-        <Row>
-          <Col span={14} offset={3}>
-            <span>Cân nặng</span>
-          </Col>
-        </Row>
-        <Row style={{ marginBottom: "10px" }}>
-          <Col span={3}></Col>
-          <Col span={14}>
-            <Slider
-              min={config.weight.min}
-              max={config.weight.max}
-              value={weight}
-              onChange={(value) => setWeight(value)}
-              marks={{
-                [config.weight.min]: config.weight.minLabel,
-                [config.weight.max]: config.weight.maxLabel,
-              }}
-            />
-          </Col>
-          <Col span={4}>{weight}kg</Col>
-        </Row>
-      </div>
-    );
-  };
+  //       <Row>
+  //         <Col span={14} offset={3}>
+  //           <span>Cân nặng</span>
+  //         </Col>
+  //       </Row>
+  //       <Row style={{ marginBottom: "10px" }}>
+  //         <Col span={3}></Col>
+  //         <Col span={14}>
+  //           <Slider
+  //             min={config.weight.min}
+  //             max={config.weight.max}
+  //             value={weight}
+  //             onChange={(value) => setWeight(value)}
+  //             marks={{
+  //               [config.weight.min]: config.weight.minLabel,
+  //               [config.weight.max]: config.weight.maxLabel,
+  //             }}
+  //           />
+  //         </Col>
+  //         <Col span={4}>{weight}kg</Col>
+  //       </Row>
+  //     </div>
+  //   );
+  // };
 
   return (
     <Modal
@@ -155,7 +155,7 @@ const SizeGuideModal = ({ isOpen, onClose, categoryId, productDetailId }: SizeGu
       style={{ top: 20 }}
     >
       <Tabs activeKey={activeTab} onChange={setActiveTab}>
-        <TabPane tab="Công cụ chọn size" key="1">
+        {/* <TabPane tab="Công cụ chọn size" key="1">
           {renderSizeSelector()}
           <div className="text-center mt-6">
             <p className="font-bold text-sm">Glow Clothing gợi ý bạn</p>
@@ -213,7 +213,7 @@ const SizeGuideModal = ({ isOpen, onClose, categoryId, productDetailId }: SizeGu
 ) : null}
 
           </div>
-        </TabPane>
+        </TabPane> */}
         <TabPane tab="Size Nam" key="2">
           <h3 className="text-xl font-semibold mb-2">Bảng size Nam</h3>
           {isSuccess && renderTable(sizeData.data.nam)}

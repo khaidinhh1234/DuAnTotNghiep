@@ -264,7 +264,7 @@ const ProductDetail: React.FC = () => {
       } catch (error: any) {
         toast.error(
           error.response?.data?.message ||
-            "Có l��i xảy ra khi thêm vào gi�� hàng."
+            "Có lỗi xảy ra khi thêm vào giỏ hàng."
         );
       }
     },
@@ -716,7 +716,7 @@ const ProductDetail: React.FC = () => {
                 <div className="flex items-center space-x-2 mb-2">
                   <EyeOutlined style={{ fontSize: "24px" }} />
                   <span className="font-bold text-lg">{product?.luot_xem}</span>
-                  <span className="text-lg ">Người đã xem sản phẩm này</span>
+                  <span className="text-lg ">Lượt xem sản phẩm này</span>
                 </div>
               </div>
               <div className="mb-3 text-xl font-medium">
