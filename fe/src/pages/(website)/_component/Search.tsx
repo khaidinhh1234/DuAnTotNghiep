@@ -60,7 +60,7 @@ const Search = () => {
   });
 
   const { data: searchResponse, refetch } = useQuery<SearchResponse>({
-    queryKey: ["search", searchValue],
+    queryKey: ["PRODUCTS_KEY", searchValue],
     queryFn: async () => {
       if (!searchValue.trim()) return null;
       const response = await instanceClient.post(

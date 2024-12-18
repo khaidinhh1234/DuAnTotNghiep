@@ -26,7 +26,7 @@ class SendMailContact implements ShouldQueue
         if ($event->condition === 'contact') {
             $email = $event->email;
             $name = $event->name;
-            $noidung = LienHe::query()->where('email', $email)->first()->noi_dung_lien_he;
+            $noidung = $event->noiDung;
             Mail::send('emails.contact', compact('name', 'noidung', 'email'), function ($message) use ($email) {
                 $message->to($email);
                 $message->subject('Thông báo liên hệ');
