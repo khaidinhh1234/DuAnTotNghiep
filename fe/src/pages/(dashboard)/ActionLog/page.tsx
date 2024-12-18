@@ -8,6 +8,15 @@ import ProfileBanner from "../adminProfile/profile/ProfileBanner";
 import { useLocalStorage } from "@/components/hook/useStoratge";
 const { RangePicker } = DatePicker;
 export function ActionLog() {
+  const formatMoTa = (data: any) => {
+    const capNhat = `Cập nhật bản ghi trong bảng < san_phams >:`;
+    const luotXem = `luot_xem: <${data.luot_xem_before}> thành <${data.luot_xem_after}>`;
+
+    // Lấy mô tả đầu tiên trong danh sách đánh giá
+    const danhGia = data.danhGias?.[0]?.mo_ta || "Không có mô tả chi tiết";
+
+    return `${capNhat} ${luotXem}, Mô tả: ${danhGia}`;
+  };
   const { data: lichsu } = useQuery({
     queryKey: ["actionLog"],
     queryFn: async () => {
@@ -160,6 +169,7 @@ export function ActionLog() {
       dataIndex: "mo_ta",
       key: "mo_ta",
       width: "30%",
+      render: (_, record: any) => <span>{formatMoTa(record)}</span>,
     },
     {
       title: "Địa chỉ IP",
