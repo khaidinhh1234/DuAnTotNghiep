@@ -18,9 +18,22 @@ import instanceClient from "@/configs/client";
 import { uploadToCloudinary } from "@/configs/cloudinary";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
+import instance from "@/configs/admin";
 const { Text, Title } = Typography;
 
 const ProfileBanner = ({ profile, refetch }: any) => {
+  const {
+    data: apiResponse,
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ["websiteInfo"],
+    queryFn: async () => {
+      const response = await instance.get("/thong-tin-web");
+      return response.data;
+    },
+  });
+
   const [avatarImage, setAvatarImage] = useState<string>("");
   const [{ user }, setUser] = useLocalStorage("user" as any, {});
   const [tempImageUrl, setTempImageUrl] = useState<string>("");
@@ -91,39 +104,44 @@ const ProfileBanner = ({ profile, refetch }: any) => {
         className="p-4 bg-white shadow-md"
       >
         <Row gutter={[16, 16]} justify="center">
-          {/* Posts | Followers | Following */}
-          <Col
-            xs={24}
-            sm={24}
-            lg={8}
-            className="flex justify-center order-2 lg:order-1"
-          >
-            <div className="flex justify-between w-full max-w-xs space-x-6 text-center">
-              <div>
-                <FormOutlined style={{ fontSize: "24px", color: "#50b2fc" }} />
-                <Title level={4} className="m-0">
-                  {profile?.so_luong_danh_gia?.toLocaleString() ?? 0}
-                </Title>
-                <Text type="secondary">Bài viết</Text>
+          {user?.ten !== "Trị" && (
+            <Col
+              xs={24}
+              sm={24}
+              lg={8}
+              className="flex justify-center order-2 lg:order-1"
+            >
+              <div className="flex justify-between w-full max-w-xs space-x-6 text-center">
+                <div>
+                  <FormOutlined
+                    style={{ fontSize: "24px", color: "#50b2fc" }}
+                  />
+                  <Title level={4} className="m-0">
+                    {profile?.so_luong_danh_gia?.toLocaleString() ?? 0}
+                  </Title>
+                  <Text type="secondary">Bài viết</Text>
+                </div>
+                <div>
+                  <CodepenOutlined
+                    style={{ fontSize: "24px", color: "#50b2fc" }}
+                  />
+                  <Title level={4} className="m-0">
+                    {profile?.so_luong_don_hang?.toLocaleString() ?? 0}
+                  </Title>
+                  <Text type="secondary">Đơn hàng</Text>
+                </div>
+                <div>
+                  <HeartOutlined
+                    style={{ fontSize: "24px", color: "#50b2fc" }}
+                  />
+                  <Title level={4} className="m-0">
+                    {profile?.so_luong_yeu_thich?.toLocaleString() ?? 0}
+                  </Title>
+                  <Text type="secondary">Yêu thích</Text>
+                </div>
               </div>
-              <div>
-                <CodepenOutlined
-                  style={{ fontSize: "24px", color: "#50b2fc" }}
-                />
-                <Title level={4} className="m-0">
-                  {profile?.so_luong_don_hang?.toLocaleString() ?? 0}
-                </Title>
-                <Text type="secondary">Đơn hàng</Text>
-              </div>
-              <div>
-                <HeartOutlined style={{ fontSize: "24px", color: "#50b2fc" }} />
-                <Title level={4} className="m-0">
-                  {profile?.so_luong_yeu_thich?.toLocaleString() ?? 0}
-                </Title>
-                <Text type="secondary">Yêu thích</Text>
-              </div>
-            </div>
-          </Col>
+            </Col>
+          )}
           {/* Profile Image and Info */}
           <Col
             xs={24}
@@ -191,37 +209,42 @@ const ProfileBanner = ({ profile, refetch }: any) => {
             </div>
           </Col>
           {/* Social Buttons and Story Button */}
-          <Col
-            xs={24}
-            sm={24}
-            lg={8}
-            className="flex justify-center order-3 lg:order-3"
-          >
-            <div className="flex items-center space-x-4">
-              <Button
-                shape="circle"
-                icon={<FacebookFilled className="text-white" />}
-                style={{ backgroundColor: "#1877F2" }}
-              />
-              <Button
-                shape="circle"
-                icon={<TwitterCircleFilled className="text-white" />}
-                style={{ backgroundColor: "#1DA1F2" }}
-              />
-              <Button
-                shape="circle"
-                icon={<YoutubeFilled className="text-white" />}
-                style={{ backgroundColor: "#CD201F" }}
-              />
-              {/* <Button
+          {user?.ten !== "Trị" && (
+            <Col
+              xs={24}
+              sm={24}
+              lg={8}
+              className="flex justify-center order-3 lg:order-3"
+            >
+              <div className="flex items-center space-x-4">
+                <Button
+                  shape="circle"
+                  href={apiResponse?.data?.link_facebook}
+                  icon={<FacebookFilled className="text-white" />}
+                  style={{ backgroundColor: "#1877F2" }}
+                />
+                <Button
+                  shape="circle"
+                  href={apiResponse?.data?.link_instagram}
+                  icon={<TwitterCircleFilled className="text-white" />}
+                  style={{ backgroundColor: "#1DA1F2" }}
+                />
+                <Button
+                  shape="circle"
+                  href={apiResponse?.data?.link_youtube}
+                  icon={<YoutubeFilled className="text-white" />}
+                  style={{ backgroundColor: "#CD201F" }}
+                />
+                {/* <Button
                 type="default"
                 className="text-white bg-slate-950"
                 onClick={() => setpass(true)}
               >
                 Đổi mật khẩu
               </Button> */}
-            </div>
-          </Col>
+              </div>
+            </Col>
+          )}
         </Row>
         {/* Tabbing Section */}
         {/* <ProfileTab /> */}

@@ -383,10 +383,10 @@ class TrangChiTietSpController extends Controller
 
         $kichThuocGoiY = BienTheKichThuoc::where('loai_kich_thuoc', $tenDanhMuc)
             ->where(function ($query) use ($chieuCao, $canNang) {
-                $query->whereBetween('chieu_cao_toi_thieu', [$chieuCao - 10, $chieuCao + 10])
-                    ->whereBetween('chieu_cao_toi_da', [$chieuCao - 10, $chieuCao + 10])
-                    ->whereBetween('can_nang_toi_thieu', [$canNang - 10, $canNang + 10])
-                    ->whereBetween('can_nang_toi_da', [$canNang - 10, $canNang + 10]);
+                $query->whereBetween('chieu_cao_toi_thieu', [$chieuCao - 5, $chieuCao + 5])
+                    ->whereBetween('chieu_cao_toi_da', [$chieuCao - 5, $chieuCao + 5])
+                    ->whereBetween('can_nang_toi_thieu', [$canNang - 5, $canNang + 5])
+                    ->whereBetween('can_nang_toi_da', [$canNang - 5, $canNang + 5]);
             })
             ->pluck('kich_thuoc');
 
