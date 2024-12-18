@@ -27,19 +27,11 @@ class TrangLienHeController extends Controller
             ]);
 
 
-            if (Auth::guard('api')->check()) {
-                $validateLienHe['user_id'] = Auth::guard('api')->id();
-            } else {
-                return response()->json([
-                    'status' => false,
-                    'status_code' => 401,
-                    'message' => 'Không thể gửi liên hệ',
-                ], 401);
-            }
+            $validateLienHe['user_id'] = Auth::guard('api')->check() ? Auth::guard('api')->id() : 0;
 
             $lienhe = LienHe::create($validateLienHe);
 
-            event(new SendMail( $lienhe->email, $lienhe->name, 'contact'));
+            event(new SendMail( $lienhe->email, $lienhe->name, 'contact', $validateLienHe['noi_dung_lien_he']));
             DB::commit();
             return response()->json([
                 'status' => true,
