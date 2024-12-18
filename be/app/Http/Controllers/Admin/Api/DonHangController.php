@@ -268,6 +268,7 @@ class DonHangController extends Controller
             ], 404);
         }
     }
+
     // Cập nhập trạng thái thanh toán
     public function updatePaymentStatus(UpdatePaymentStatusRequest $request)
     {
@@ -579,10 +580,7 @@ class DonHangController extends Controller
                 // Gửi thông báo hoàn hàng qua Telegram
                 $thongBaoHoanHang = new ThongBaoTelegramController();
                 $thongBaoHoanHang->thongBaoHoanHang($hoanHang);
-                $donHang->update([
-                    'ngay_hoan' => Carbon::now(),
-                    'trang_thai_don_hang' => DonHang::TTDH_HH
-                ]);
+                $donHang->update(['ngay_hoan' => Carbon::now()]);
                 $donHang->hoanTien->update(['trang_thai' => 'hoan_thanh_cong']);
                 $mess = 'Xác nhận hoàn hàng thành công.';
             } else if ($validated['trang_thai'] === 'tu_choi') {
@@ -590,7 +588,7 @@ class DonHangController extends Controller
                 $giaoDichVi->update(['trang_thai' => 'that_bai']);
 
                 $donHang->update([
-                    'trang_thai_don_hang' => DonHang::TTDH_HTDH,
+                    'trang_thai_don_hang' => DonHang::TTDH_TCHH,
                     'ngay_hoan' => null
                 ]);
                 $donHang->hoanTien->update(['trang_thai' => 'tu_choi']);
@@ -627,6 +625,8 @@ class DonHangController extends Controller
     {
         try {
             $donHangs = DonHang::where('li_do_huy_hang', '!=', null)
+                ->whereIn('trang_thai_don_hang', [DonHang::TTDH_CXNDH, DonHang::TTDH_DXH, DonHang::TTDH_DH])
+                ->where('trang_thai_huy', '!=', 00)
                 ->orderByDesc('id')->get();
             return response()->json([
                 'status' => true,

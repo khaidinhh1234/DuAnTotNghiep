@@ -70,7 +70,8 @@ class DonHang extends Model
         'ngay_huy',
         'ngay_hoan',
         'ly_do_huy',
-        'ly_do_tu_choi'
+        'ly_do_tu_choi',
+        'trang_thai_huy'
     ];
 
     // Relationship with DonHangChiTiet
@@ -109,6 +110,7 @@ class DonHang extends Model
     {
         return $this->hasOne(HoanTien::class, 'don_hang_id', 'id');
     }
+
 
     protected static function boot()
     {
