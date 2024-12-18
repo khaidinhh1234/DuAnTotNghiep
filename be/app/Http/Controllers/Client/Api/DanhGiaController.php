@@ -2,12 +2,15 @@
 
 namespace App\Http\Controllers\Client\Api;
 
+use App\Events\ThongBaoMoi;
 use App\Http\Controllers\Controller;
 use App\Models\AnhDanhGia;
 use App\Models\BienTheSanPham;
 use App\Models\DanhGia;
 use App\Models\DonHang;
 use App\Models\SanPham;
+use App\Models\ThongBao;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -115,6 +118,21 @@ class DanhGiaController extends Controller
                 }
             }
 
+            $userAdmin = User::query()->with('vaiTros')
+                ->whereHas('vaiTros', function ($query) {
+                    $query->where('ten_vai_tro', 'Quản trị viên');
+                })->first();
+
+            $thongBao = ThongBao::create([
+                'user_id' => $userAdmin->id,
+                'tieu_de' => 'Có đánh giá mới',
+                'noi_dung' => 'Đánh giá mới của: '. Auth::user()->ho .' ' . Auth::user()->ten  . ' cho đơn hàng ' . $donHang->ma_don_hang,
+                'loai' => 'Đơn hàng',
+                'duong_dan' => $donHang->ma_don_hang,
+                'hinh_thu_nho' => 'https://path-to-thumbnail-image.png',
+            ]);
+
+            broadcast(new ThongBaoMoi($thongBao))->toOthers();
             DB::commit();
             return response()->json([
                 'status' => true,

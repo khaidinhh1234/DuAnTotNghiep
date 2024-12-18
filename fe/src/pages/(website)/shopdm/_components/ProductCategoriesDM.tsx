@@ -474,9 +474,9 @@ const ProductCategoriesDM = () => {
                                               indexCon
                                             ]?.[indexConCon] || false
                                           }
-                                          // disabled={
-                                          //   !childChecked[index]?.[indexCon]
-                                          // }
+                                          disabled={
+                                            !childChecked[index]?.[indexCon]
+                                          }
                                           onChange={(e) => {
                                             const isChecked = e.target.checked;
                                             handleGrandchildChange(
