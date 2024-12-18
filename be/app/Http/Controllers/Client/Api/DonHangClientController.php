@@ -245,13 +245,13 @@ class DonHangClientController extends Controller
             $tongTien = $donHang->tong_tien_don_hang;
             if ($donHang->ma_giam_gia) {
                 $soTienGiamGia = $maGiamGia->loai === 'phan_tram'
-                    ? ($donHang->tong_tien_don_hang * $maGiamGia->giam_gia / 100)
-                    : $maGiamGia->giam_gia;
+                    ? $maGiamGia->giam_toi_da
+                    : ($donHang->tong_tien_don_hang * $maGiamGia->giam_gia / 100);
 
                 if ($soTienGiamGia > $donHang->tong_tien_don_hang) {
                     $soTienGiamGia = $donHang->tong_tien_don_hang;
                 }
-                $tongTien = $donHang->chiTiets->sum('thanh_tien') - $soTienGiamGia;
+                $tongTien = $donHang->chiTiets->sum('thanh_tien') - $donHang->so_tien_giam_gia;
             }
 
             // Xử lý chi tiết đơn hàng
@@ -306,7 +306,7 @@ class DonHangClientController extends Controller
                     'tong_so_luong' => $tongSoLuong,
                     'tong_thanh_tien_san_pham' => $tongTien,
                     'tien_ship' => $tienShip,
-                    'so_tien_giam_gia' => $soTienGiamGia,
+                    'so_tien_giam_gia' => $donHang->so_tien_giam_gia,
 
                     // 'tiet_kiem' => $soTienGiamGia + $tietKiemShip,
 
@@ -707,6 +707,7 @@ class DonHangClientController extends Controller
                     'li_do_huy_hang' => $lidoHuyHang,
                     'trang_thai_don_hang' => DonHang::TTDH_DH,
                     'ngay_huy' => $thoiGian,
+                    'trang_thai_huy' => 0,
                 ]);
 
                 if ($donHang->trang_thai_thanh_toan == DonHang::TTTT_DTT) {
@@ -766,6 +767,7 @@ class DonHangClientController extends Controller
                     'li_do_huy_hang' => $lidoHuyHang,
                     'trang_thai_don_hang' => DonHang::TTDH_CXNDH,
                     'ngay_huy' => $thoiGian,
+                    'trang_thai_huy' => 1,
                 ]);
             }
 

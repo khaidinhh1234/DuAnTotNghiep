@@ -36,14 +36,10 @@ class ThongBaoTelegramController extends Controller
         $message .= "Ghi chú: {$vanChuyen->ghi_chu}\n";
 
         // Lấy danh sách các shipper có số điện thoại và `chat_id`
-        $shippers = User::whereNotNull('so_dien_thoai')
-            ->whereNotNull('telegram_chat_id')
-            ->get();
+        $shipper = $vanChuyen->shipper;
 
         // Gửi thông báo tới từng shipper
-        foreach ($shippers as $shipper) {
-            $this->sendTelegramMessage($shipper->telegram_chat_id, $message);
-        }
+        $this->sendTelegramMessage($shipper->telegram_chat_id, $message);
 
         return response()->json(['message' => 'Thông báo đã được gửi tới shipper.']);
     }
@@ -70,7 +66,7 @@ class ThongBaoTelegramController extends Controller
 
         return response()->json(['message' => 'Thông báo hoàn tất đơn hàng đã được gửi.']);
     }
- 
+
     public function thongBaoHoanHang($hoanHang)
     {
         $donHang = $hoanHang->donHang;
@@ -84,7 +80,7 @@ class ThongBaoTelegramController extends Controller
         $message .= "Khách hàng: {$donHang->ten_nguoi_dat_hang}\n";
         $message .= "Tổng tiền hoàn: {$donHang->tong_tien_don_hang} VND\n";
         $message .= "Đường dẫn: http://192.168.250.174:5173/shipper\n";
-        
+
         $this->sendTelegramMessage($shipper->telegram_chat_id, $message);
 
         return response()->json(['message' => 'Thông báo hoàn hàng đã được gửi.']);
