@@ -167,10 +167,6 @@ const ContactPage = () => {
                       <option value="ho_tro">Hỗ trợ</option>
                       <option value="bao_gia">Báo giá</option>
                       <option value="phan_hoi">Phản hồi</option>
-                      <option value="thong_bao_san_pham_moi">
-                        Thông báo sản phẩm mới
-                      </option>
-                      <option value="bo_suu_tap">Bộ sưu tập</option>
                       <option value="khac">Khác</option>
                     </select>
                   </div>
