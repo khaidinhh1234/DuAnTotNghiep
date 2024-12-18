@@ -151,6 +151,7 @@ Route::middleware([])
             // Thông báo người dùng
             Route::get('thong-bao', [ThongBaoController::class, 'index']);
             Route::post('thong-bao/da-doc/{id}', [ThongBaoController::class, 'daXem']);
+            Route::post('thong-bao/da-doc-tat-ca', [ThongBaoController::class, 'daXemTatCa']);
 
             // Đơn hàng
             Route::patch('/xac-nhan-don-hang/{ma_don_hang}', [DonHangClientController::class, 'xacNhanDonHang']);
