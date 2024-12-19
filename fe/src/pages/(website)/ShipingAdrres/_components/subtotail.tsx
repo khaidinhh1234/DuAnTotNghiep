@@ -23,6 +23,7 @@ const Subtotal = ({ tong_tien, Macode, trangthai, isPending }: any) => {
         : tong_tien?.tong_gia_tri_san_pham * ((selectedDiscount ?? 0) / 100);
   // console.log("giamgia", giamgia);
   // console.log("tong_tien", giamgiatoida);
+  console.log("tong_tien", tong_tien);
   return (
     <div className="lg:col-span-4 col-span-6">
       <div className="border px-4 py-1 lg:w-[359px] rounded-md">
@@ -64,13 +65,13 @@ const Subtotal = ({ tong_tien, Macode, trangthai, isPending }: any) => {
                 </span>
               </div>
             )}
-            <div className=" flex justify-between font-medium border-hrBlack">
+            {/* <div className=" flex justify-between font-medium border-hrBlack">
               <p>Tiết kiệm</p>
               <span className="px-2 text-red-500">
                 {" "}
                 - {(tong_tien?.tong_tiet_kiem ?? 0).toLocaleString("vi-VN")}₫
               </span>
-            </div>
+            </div> */}
             <div className=" flex justify-between font-medium border-hrBlack">
               <p>Phí giao hàng</p>
               <span className="px-2">

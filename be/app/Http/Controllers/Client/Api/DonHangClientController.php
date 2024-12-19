@@ -420,7 +420,9 @@ class DonHangClientController extends Controller
 
             if (isset($request->ma_giam_gia)) {
                 $maGiamGia = MaKhuyenMai::where('ma_code', $request->ma_giam_gia)->first();
-
+                if($maGiamGia->trang_thai === 0){
+                    return response()->json(['status' => false, 'message' => 'Mã giảm giá không còn được áp dụng.'], 400);
+                }
                 if ($maGiamGia) {
                     if ($maGiamGia->ap_dung_vi === 1 && $request->phuong_thuc_thanh_toan !== DonHang::PTTT_VT) {
                         return response()->json([
