@@ -1092,10 +1092,32 @@ class ThongKeTongQuanController extends Controller
                 ])
                 ->count();
 
+            $trangThai = [
+                DonHang::TTDH_DXH,
+                DonHang::TTDH_HTDH,
+                DonHang::TTDH_CKHCN,
+                DonHang::TTDH_CXNHH
+            ];
+
             // Số lượng đơn thành công trong ngày
-            $soDonHangThanhCong = DonHang::where('trang_thai_don_hang', DonHang::TTDH_HTDH)
-                ->whereDate('ngay_hoan_thanh_don', operator: $today)
-                ->count();
+            $donHangs = DonHang::whereIn('trang_thai_don_hang', $trangThai)
+                ->where(function ($query) use ($today) {
+                    // Nếu trạng thái thanh toán là PTTT_TT, lọc theo ngày hoàn thành đơn
+                    $query->where(function ($q) use ($today) {
+                        $q->where('phuong_thuc_thanh_toan', DonHang::PTTT_TT)
+                            ->where('trang_thai_thanh_toan', DonHang::TTTT_DTT)
+                            ->whereDate('ngay_hoan_thanh_don', $today);
+                    })
+                        // Nếu trạng thái thanh toán là PTTT_MM_ATM hoặc PTTT_MM_QR, lọc theo created_at
+                        ->orWhere(function ($q) use ($today) {
+                            $q->whereIn('phuong_thuc_thanh_toan', [DonHang::PTTT_MM_ATM, DonHang::PTTT_MM_QR])
+                                ->where('trang_thai_thanh_toan', DonHang::TTTT_DTT)
+                                ->whereDate('created_at', $today);
+                        });
+                })
+                ->get();
+
+            $soDonHangThanhCong = $donHangs->count();
 
             $soLuongSanPhamBanRa = DonHangChiTiet::whereHas('donHang', function ($query) use ($today) {
                 $query->where('trang_thai_don_hang', DonHang::TTDH_HTDH)  // Trạng thái hoàn tất đơn hàng

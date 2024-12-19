@@ -23,7 +23,7 @@ const Chart2 = () => {
       <Card className=" rounded-lg bg-[#F2F4F7] w-60">
         <div className="">
           <div className="">
-            <div className="text-black text-base">Chốt đơn:</div>
+            <div className="text-black text-base">Số đơn:</div>
             <div className="text-black text-lg font-bold">
               {" "}
               <Statistic

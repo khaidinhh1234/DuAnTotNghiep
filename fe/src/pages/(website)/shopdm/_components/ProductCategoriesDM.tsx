@@ -113,12 +113,14 @@ const ProductCategoriesDM = () => {
         [childIndex]: checked,
       },
     }));
-    // Cập nhật danh sách con được chọn
+
     if (checked) {
+      // Thêm con vào danh sách được chọn
       setSelectedChildIds((prev) => [...prev, childId]);
       const grandchildIds =
         grandchildren?.map((grandchild: any) => grandchild?.id) ?? [];
       setSelectedGrandchildIds((prev) => [...prev, ...grandchildIds]);
+
       // Đảm bảo cha được chọn
       setParentChecked((prevState) => ({
         ...prevState,
@@ -130,6 +132,9 @@ const ProductCategoriesDM = () => {
         }
         return prev;
       });
+
+      // Lấy ID của chính nó (con)
+      console.log("Selected Child ID:", childId);
     } else {
       // Bỏ chọn con
       setSelectedChildIds((prev) => prev.filter((id) => id !== childId));
@@ -138,6 +143,7 @@ const ProductCategoriesDM = () => {
       setSelectedGrandchildIds((prev) =>
         prev.filter((id) => !grandchildIds.includes(id))
       );
+
       // Kiểm tra nếu không còn con nào được chọn, bỏ chọn cha
       setChildChecked((prev) => {
         const allChildrenUnchecked = Object.values(
@@ -157,6 +163,7 @@ const ProductCategoriesDM = () => {
       });
     }
   };
+
   const nav = useNavigate();
   const { data, refetch: refetch2 } = useQuery({
     queryKey: [
@@ -427,7 +434,6 @@ const ProductCategoriesDM = () => {
                                     checked={
                                       childChecked[index]?.[indexCon] || false
                                     }
-                                    // disabled={!parentChecked[index]}
                                     onChange={(e) => {
                                       const isChecked = e.target.checked;
                                       handleChildChange(
@@ -444,21 +450,17 @@ const ProductCategoriesDM = () => {
                                 </label>
                                 <i
                                   className={`fa-solid fa-plus mr-3 cursor-pointer ${
-                                    expanded.includes(
-                                      `${index}-${indexCon}` as any
-                                    )
+                                    expanded.includes(`${index}-${indexCon}`)
                                       ? "rotate-45"
                                       : ""
                                   }`}
                                   onClick={() =>
-                                    toggleExpand(`${index}-${indexCon}` as any)
+                                    toggleExpand(`${index}-${indexCon}`)
                                   }
                                 ></i>
                               </div>
 
-                              {expanded.includes(
-                                `${index}-${indexCon}` as any
-                              ) &&
+                              {expanded.includes(`${index}-${indexCon}`) &&
                                 itemcon.children?.map(
                                   (itemconcon: any, indexConCon: any) => (
                                     <div
@@ -474,9 +476,6 @@ const ProductCategoriesDM = () => {
                                               indexCon
                                             ]?.[indexConCon] || false
                                           }
-                                          disabled={
-                                            !childChecked[index]?.[indexCon]
-                                          }
                                           onChange={(e) => {
                                             const isChecked = e.target.checked;
                                             handleGrandchildChange(
@@ -486,6 +485,17 @@ const ProductCategoriesDM = () => {
                                               isChecked,
                                               itemconcon.id
                                             );
+
+                                            // Nếu chọn cháu thì tự động chọn con
+                                            if (isChecked) {
+                                              handleChildChange(
+                                                index,
+                                                indexCon,
+                                                true,
+                                                itemcon.id,
+                                                itemcon.children
+                                              );
+                                            }
                                             // isChecked && mutate(itemconcon.id);
                                           }}
                                         />
