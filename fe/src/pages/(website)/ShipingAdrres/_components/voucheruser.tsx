@@ -566,13 +566,14 @@ const Voucheruser: React.FC<VoucheruserProps> = ({
                           </span>
                         </div>
                       )}
-                    </div>
+                    </div> 
+                    {/* <br />
                     {clickedIndex === item?.ma_khuyen_mai?.ma_code &&
                       giamtoida && (
                         <div className="text-sm text-gray-700 mt-2">
                           Giảm tối đa: ₫{giamtoida?.toLocaleString("vi-VN")}
                         </div>
-                      )}
+                      )} */}
                   </div>
                 ))
               ) : (

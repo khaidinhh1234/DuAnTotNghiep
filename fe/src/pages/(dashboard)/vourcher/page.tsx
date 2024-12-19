@@ -223,7 +223,7 @@ const VoucherAdmin: React.FC = () => {
           <span>
             {" "}
             {trang_thai == 1
-              ? "hoạt động"
+              ? "Hoạt động"
               : trang_thai == 0
                 ? "Tạm ngừng"
                 : "hết hạn "}
